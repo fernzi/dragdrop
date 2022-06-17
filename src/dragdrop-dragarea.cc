@@ -47,7 +47,11 @@ void DragArea::startDrag(Qt::DropActions actions)
 	mime->setUrls(urls);
 	auto drag = new QDrag(this);
 	drag->setMimeData(mime);
-	drag->exec(Qt::CopyAction | Qt::LinkAction);
+
+	auto res = drag->exec(Qt::CopyAction | Qt::LinkAction);
+	if (res != Qt::IgnoreAction) {
+		emit filesSent(urls);
+	}
 }
 
 void DragArea::addFile(QFileInfo file)

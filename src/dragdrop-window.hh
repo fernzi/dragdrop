@@ -19,10 +19,12 @@ class Window : public QDialog
 	Q_OBJECT
 
 public:
-	Window(QList<QFileInfo> files, QWidget* parent = nullptr);
+	Window(QList<QFileInfo> files, bool uris, bool once,
+	       QWidget* parent = nullptr);
 
 public slots:
 	void onFilesReceived(QList<QUrl> files);
+	void onFilesSent(QList<QUrl> files);
 
 private:
 	bool m_uris;

@@ -41,7 +41,8 @@ int Application::exec()
 			files << file;
 		}
 	}
-	Window win(files);
+	Window win(files, parser.isSet(QStringLiteral("uris")),
+	           parser.isSet(QStringLiteral("once")));
 	win.show();
 	return QApplication::exec();
 }

@@ -10,6 +10,7 @@
 
 #include <QListWidget>
 #include <QFileInfo>
+#include <QUrl>
 
 namespace DragDrop {
 
@@ -25,6 +26,9 @@ public:
 
 protected:
 	void startDrag(Qt::DropActions actions) override;
+
+signals:
+	void filesSent(QList<QUrl> files);
 };
 
 }; // namespace DragDrop

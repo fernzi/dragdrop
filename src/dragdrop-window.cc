@@ -13,27 +13,37 @@
 
 namespace DragDrop {
 
-DragDrop::Window::Window(QList<QFileInfo> files, QWidget* parent)
+Window::Window(QList<QFileInfo> files, bool uris, bool once,
+               QWidget* parent)
 	: QDialog(parent)
-	, m_uris(false)
-	, m_once(false)
+	, m_uris(uris)
+	, m_once(once)
 {
 	setWindowTitle(tr("Drag and Drop"));
 
 	auto layout = new QVBoxLayout(this);
 	layout->setContentsMargins(0, 0, 0, 0);
+	QWidget* area;
 	if (files.isEmpty()) {
-		auto area = new DropArea();
-		connect(area, &DropArea::filesReceived,
+		area = new DropArea;
+		connect(static_cast<DropArea*>(area), &DropArea::filesReceived,
 		        this, &Window::onFilesReceived);
-		layout->addWidget(area);
 	} else {
-		auto area = new DragArea(files);
-		layout->addWidget(area);
+		area = new DragArea(files);
+		connect(static_cast<DragArea*>(area), &DragArea::filesSent,
+		        this, &Window::onFilesSent);
+	}
+	layout->addWidget(area);
+}
+
+void Window::onFilesSent(QList<QUrl> files)
+{
+	if (m_once) {
+		close();
 	}
 }
 
-void DragDrop::Window::onFilesReceived(QList<QUrl> files)
+void Window::onFilesReceived(QList<QUrl> files)
 {
 	QStringList paths;
 	QTextStream out(stdout);
