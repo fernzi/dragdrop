@@ -31,3 +31,33 @@ which will then print their names into the standard output.
 
 See the manual at [dragdrop(1)](doc/man/dragdrop.1.scd)
 for all the detailed options.
+
+# Installation
+
+If DragDrop is not available
+from your favourite distro's repositories,
+you'll need to build it from source.
+So first you have to install its dependencies.
+
+Package naming is not consistent across all distributions,
+but you'll probably have some luck with these:
+
+```sh
+# For Debian, Ubuntu, and derivatives:
+apt install build-essential cmake qtbase5-dev scdoc
+
+# For Arch, Manjaro, and the rest:
+pacman -S base-devel cmake qt5-base scdoc
+```
+
+Once that's installed,
+you can use CMake to build the program with the commands
+
+```sh
+cmake -B build .
+cmake --build build
+cmake --install build
+```
+
+which should build and install DragDrop
+into the `/usr/local` prefix by default.
