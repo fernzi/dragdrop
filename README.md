@@ -32,7 +32,7 @@ which will then print their names into the standard output.
 See the manual at [dragdrop(1)](doc/man/dragdrop.1.scd)
 for all the detailed options.
 
-# Installation
+## Installation
 
 If DragDrop is not available
 from your favourite distro's repositories,
