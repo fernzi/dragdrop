@@ -30,15 +30,14 @@ DropArea::DropArea(QWidget* parent)
 void DropArea::dragEnterEvent(QDragEnterEvent* event)
 {
 	if (event->mimeData()->hasUrls()) {
-		event->accept();
-	} else {
-		event->ignore();
+		event->acceptProposedAction();
 	}
 }
 
 void DropArea::dropEvent(QDropEvent* event)
 {
 	emit filesReceived(event->mimeData()->urls());
+	event->acceptProposedAction();
 }
 
 }; // namespace DragDrop

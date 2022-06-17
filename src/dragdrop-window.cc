@@ -36,7 +36,7 @@ Window::Window(QList<QFileInfo> files, bool uris, bool once,
 	layout->addWidget(area);
 }
 
-void Window::onFilesSent(QList<QUrl> files)
+void Window::onFilesSent()
 {
 	if (m_once) {
 		close();

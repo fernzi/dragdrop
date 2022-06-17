@@ -24,7 +24,7 @@ public:
 
 public slots:
 	void onFilesReceived(QList<QUrl> files);
-	void onFilesSent(QList<QUrl> files);
+	void onFilesSent();
 
 private:
 	bool m_uris;
