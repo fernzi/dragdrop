@@ -41,12 +41,21 @@ if(SCDOC)
 	)
 endif()
 
+include(CheckIPOSupported)
+check_ipo_supported(RESULT IPO_SUPPORTED)
+
 file(GLOB PROJECT_SOURCES CONFIGURE_DEPENDS "src/*.cc" "src/*.hh")
 
 add_executable(
 	${PROJECT_NAME}
 	${PROJECT_SOURCES}
 )
+if(IPO_SUPPORTED)
+	set_target_properties(
+		${PROJECT_NAME} PROPERTIES
+		INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE
+	)
+endif()
 target_compile_definitions(
 	${PROJECT_NAME} PRIVATE
 	DRAGDROP_NAME="${PROJECT_NAME}"

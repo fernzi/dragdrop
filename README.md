@@ -54,7 +54,7 @@ Once that's installed,
 you can use CMake to build the program with the commands
 
 ```sh
-cmake -B build .
+cmake -B build -DCMAKE_BUILD_TYPE=Release .
 cmake --build build
 cmake --install build
 ```
