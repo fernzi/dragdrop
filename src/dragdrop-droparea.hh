@@ -8,12 +8,12 @@
 #ifndef DRAGDROP_DROPAREA_HH
 #define DRAGDROP_DROPAREA_HH
 
-#include <QWidget>
+#include <QLabel>
 #include <QUrl>
 
 namespace DragDrop {
 
-class DropArea : public QWidget
+class DropArea : public QLabel
 {
 	Q_OBJECT
 

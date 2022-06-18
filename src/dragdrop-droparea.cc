@@ -15,16 +15,11 @@
 namespace DragDrop {
 
 DropArea::DropArea(QWidget* parent)
-	: QWidget(parent)
+	: QLabel(parent)
 {
 	setAcceptDrops(true);
-	auto layout = new QVBoxLayout(this);
-	layout->setContentsMargins(32, 32, 32, 32);
-	layout->setAlignment(Qt::AlignCenter);
-	auto icon = QIcon::fromTheme("folder-open-symbolic");
-	auto label = new QLabel;
-	label->setPixmap(icon.pixmap(48));
-	layout->addWidget(label, Qt::AlignCenter);
+	setMargin(32);
+	setPixmap(QIcon::fromTheme("folder-open-symbolic").pixmap(48));
 }
 
 void DropArea::dragEnterEvent(QDragEnterEvent* event)
@@ -37,7 +32,8 @@ void DropArea::dragEnterEvent(QDragEnterEvent* event)
 void DropArea::dropEvent(QDropEvent* event)
 {
 	emit filesReceived(event->mimeData()->urls());
-	event->acceptProposedAction();
+	event->setDropAction(Qt::CopyAction);
+	event->accept();
 }
 
 }; // namespace DragDrop
