@@ -29,7 +29,7 @@ jobs:
         run: |
           wget -c -nv 'https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage'
           chmod a+x linuxdeployqt-continuous-x86_64.AppImage
-          ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/bin/* -appimage -extra-plugins=iconengines,platformthemes/libqgtk3.so
+          ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage -extra-plugins=iconengines,platformthemes/libqgtk3.so
         env:
           VERSION: latest
       - uses: actions/upload-artifact@v2
