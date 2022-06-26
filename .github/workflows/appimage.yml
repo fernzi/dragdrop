@@ -20,7 +20,7 @@ jobs:
         id:   cache-qt
         uses: actions/cache@v3
         with:
-          path: ../Qt
+          path: Qt
           key: ${{ runner.os }}-QtCache
 
       - name: Install Qt
@@ -39,12 +39,12 @@ jobs:
 
       - name: Package
         run: |
-          wget -c -nv 'https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage'
-          chmod a+x linuxdeployqt-continuous-x86_64.AppImage
-          ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage -extra-plugins=iconengines,platformthemes/libqgtk3.so
+          curl -JLso linuxdeployqt 'https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage'
+          chmod a+x linuxdeployqt
+          ./linuxdeployqt appdir/usr/share/applications/*.desktop -appimage -extra-plugins=iconengines,platformthemes/libqgtk3.so
         env:
           VERSION: latest
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: AppImage
           path: '*.AppImage'
