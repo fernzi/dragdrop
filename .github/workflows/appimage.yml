@@ -15,8 +15,19 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v3
-      - name: Install Dependencies
+
+      - name: Cache Qt
+        id:   cache-qt
+        uses: actions/cache@v3
+        with:
+          path: ../Qt
+          key: ${{ runner.os }}-QtCache
+
+      - name: Install Qt
         uses: jurplel/install-qt-action@v2
+        with:
+          cached: ${{ steps.cache-qt.outputs.cache-hit }}
+
       - name: Configure
         run:  cmake -S . -B build
           --install-prefix /usr
@@ -25,6 +36,7 @@ jobs:
         run:  cmake --build build
       - name: Install
         run:  DESTDIR=appdir cmake --install build
+
       - name: Package
         run: |
           wget -c -nv 'https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage'
