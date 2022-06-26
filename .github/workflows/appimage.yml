@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install Dependencies
-        run:  apt-get install -y
+        run:  sudo apt-get install -y
           cmake
           ninja
           qtbase5-dev
