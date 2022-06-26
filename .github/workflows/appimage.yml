@@ -18,11 +18,9 @@ jobs:
       - name: Install Dependencies
         run:  sudo apt-get install -y
           cmake
-          ninja
           qtbase5-dev
       - name: Configure
         run:  cmake -S . -B build
-          -G Ninja
           --install-prefix /usr
           -DCMAKE_BUILD_TYPE=Release
       - name: Build
