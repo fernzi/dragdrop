@@ -1,0 +1,42 @@
+name: Build AppImage
+
+on:
+  push:
+    paths-ignore:
+      - 'doc/**'
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - 'doc/**'
+      - '**.md'
+
+jobs:
+  build-appimage:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Dependencies
+        run:  apt-get install -y
+          cmake
+          ninja
+          qtbase5-dev
+      - name: Configure
+        run:  cmake -S . -B build
+          -G Ninja
+          --install-prefix /usr
+          -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run:  cmake --build build
+      - name: Install
+        run:  DESTDIR=appdir cmake --install build
+      - name: Package
+        run: |
+          wget -c -nv 'https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage'
+          chmod a+x linuxdeployqt-continuous-x86_64.AppImage
+          ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/bin/* -appimage -extra-plugins=iconengines,platformthemes/libqgtk3.so
+        env:
+          VERSION: latest
+      - uses: actions/upload-artifact@v2
+        with:
+          name: AppImage
+          path: '*.AppImage'

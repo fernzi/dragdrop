@@ -77,6 +77,10 @@ install(
 	RUNTIME
 	DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
+install(
+	FILES ${CMAKE_SOURCE_DIR}/etc/xdg/dragdrop.desktop
+	DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
+)
 if(MAN_TGT)
 	install(
 		FILES ${CMAKE_BINARY_DIR}/${MAN_TGT}

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=DragDrop
+GenericName=Drag and Drop Tool
+NoDisplay=true
+Comment=File drag-and-drop source for the command line
+Icon=dragdrop
+TryExec=dragdrop
+Exec=dragdrop %F
+Terminal=false
+Categories=Utility;Core;Qt;
+StartupNotify=true
