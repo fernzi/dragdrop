@@ -41,7 +41,17 @@ endif()
 include(CheckIPOSupported)
 check_ipo_supported(RESULT IPO_SUPPORTED)
 
-file(GLOB PROJECT_SOURCES CONFIGURE_DEPENDS "src/*.cc" "src/*.hh")
+set(PROJECT_SOURCES
+	src/dragdrop-application.cc
+	src/dragdrop-application.hh
+	src/dragdrop-dragarea.cc
+	src/dragdrop-dragarea.hh
+	src/dragdrop-droparea.cc
+	src/dragdrop-droparea.hh
+	src/dragdrop-window.cc
+	src/dragdrop-window.hh
+	src/dragdrop.cc
+)
 
 add_executable(
 	${PROJECT_NAME}
