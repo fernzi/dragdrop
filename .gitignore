@@ -99,6 +99,12 @@ CMakeLists.txt.user*
 *_qmlcache.qrc
 
 
+### AppImage
+/AppDir
+/appdir
+*.AppImage
+
+
 ### Emacs ###
 *~
 \#*\#
