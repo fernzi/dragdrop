@@ -34,7 +34,9 @@ on its own to get a sink to drop files into,
 which will then print their names into the standard output.
 
 See the manual at [dragdrop(1)](doc/man/dragdrop.1.scd)
-for all the detailed options.
+for all the detailed options,
+and maybe check the [examples](doc/examples)
+to see how you can use it in a script.
 
 ## Installation
 
