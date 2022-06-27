@@ -83,7 +83,7 @@ install(
 )
 install(
 	FILES ${CMAKE_SOURCE_DIR}/etc/xdg/dragdrop.svg
-	DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable
+	DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps
 )
 if(MAN_TGT)
 	install(

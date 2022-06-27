@@ -2,8 +2,6 @@ name: Build AppImage
 
 on:
   push:
-    branches:
-      - master
     paths-ignore:
       - 'doc/**'
       - '**.md'
@@ -19,8 +17,6 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
 
       - name: Cache Qt
         id:   cache-qt
@@ -33,6 +29,7 @@ jobs:
         uses: jurplel/install-qt-action@v2
         with:
           cached: ${{ steps.cache-qt.outputs.cache-hit }}
+
       - name: Install Dependencies
         run:  sudo apt-get install -y ninja-build
 
@@ -41,23 +38,23 @@ jobs:
           -G Ninja
           --install-prefix /usr
           -DCMAKE_BUILD_TYPE=Release
+
       - name: Build
         run:  cmake --build build
+
       - name: Install
         run:  DESTDIR=appdir cmake --install build
 
       - name: Package
-        id:   pack-appimage
+        id:   package
         run: |
-          export VERSION="r$(git rev-list --count @).$(git rev-parse --short @)"
-          if git describe >/dev/null 2>&1; then
-            VERSION="$(git describe --long | sed 's/^v//;s/-/.r/;s/-/./')"
-          fi
-          curl -JLso ldqt 'https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage'
-          chmod a+x ldqt
-          ./ldqt appdir/usr/share/applications/*.desktop -appimage
-          printf '::set-output name=appimage::%s' *.AppImage
+          wget -c -nv https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          wget -c -nv https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod +x linuxdeploy-*.AppImage
+          ./linuxdeploy-x86_64.AppImage --appdir appdir --plugin qt --output appimage
+          printf '::set-output name=appimage::%s' DragDrop-*.AppImage
+
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.pack-appimage.outputs.appimage }}
-          path: ${{ steps.pack-appimage.outputs.appimage }}
+          name: ${{ steps.package.outputs.appimage }}
+          path: ${{ steps.package.outputs.appimage }}
