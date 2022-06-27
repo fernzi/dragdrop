@@ -18,10 +18,10 @@ class DragArea : public QListWidget
 	Q_OBJECT
 
 public:
-	DragArea(QList<QFileInfo> files, QWidget* parent = nullptr);
+	DragArea(const QList<QFileInfo>& files, QWidget* parent = nullptr);
 	QSize sizeHint() const override;
 
-	void addFile(QFileInfo file);
+	void addFile(const QFileInfo& file);
 
 protected:
 	void startDrag(Qt::DropActions actions) override;

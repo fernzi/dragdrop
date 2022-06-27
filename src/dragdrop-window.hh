@@ -19,17 +19,26 @@ class Window : public QDialog
 	Q_OBJECT
 
 public:
-	Window(QList<QFileInfo> files, bool uris, bool once,
+	enum Option {
+		None = 0,
+		URIs = 1 << 0,
+		Once = 1 << 1,
+	};
+	Q_DECLARE_FLAGS(Options, Option)
+
+	Window(const QList<QFileInfo>& files,
+	       const Options& opts = Option::None,
 	       QWidget* parent = nullptr);
 
 public slots:
-	void onFilesReceived(QList<QUrl> files);
+	void onFilesReceived(const QList<QUrl>& files);
 	void onFilesSent();
 
 private:
-	bool m_uris;
-	bool m_once;
+	const Options m_opts;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Window::Options)
 
 }; // namespace DragDrop
 

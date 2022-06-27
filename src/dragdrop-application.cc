@@ -27,6 +27,8 @@ Application::Application(int& argc, char** argv)
 			tr("Exit after a single drag or drop.")},
 		{{"u", "uris"},
 			tr("Print URIs instead of paths on drop.")},
+		{"dirs-first",
+			tr("List directories before files on the source dialog")},
 	});
 	parser.process(*this);
 }
@@ -34,15 +36,22 @@ Application::Application(int& argc, char** argv)
 int Application::exec()
 {
 	QList<QFileInfo> files;
+	int last_dir = 0;
+	bool dirs_1st = parser.isSet(QStringLiteral("dirs-first"));
 	const auto args = parser.positionalArguments();
-	for (auto i = args.constBegin(); i != args.constEnd(); ++i) {
-		QFileInfo file(*i);
-		if (file.exists()) {
+	for (const QFileInfo& file : args) {
+		if (dirs_1st && file.isDir()) {
+			files.insert(last_dir++, file);
+		} else if (file.exists()) {
 			files << file;
 		}
 	}
-	Window win(files, parser.isSet(QStringLiteral("uris")),
-	           parser.isSet(QStringLiteral("once")));
+
+	const auto opts = Window::Options()
+		.setFlag(Window::Option::URIs, parser.isSet(QStringLiteral("uris")))
+		.setFlag(Window::Option::Once, parser.isSet(QStringLiteral("once")));
+
+	Window win(files, opts);
 	win.show();
 	return QApplication::exec();
 }

@@ -15,7 +15,7 @@
 
 namespace DragDrop {
 
-DragArea::DragArea(QList<QFileInfo> files, QWidget* parent)
+DragArea::DragArea(const QList<QFileInfo>& files, QWidget* parent)
 	: QListWidget(parent)
 {
 	setSelectionMode(DragArea::ExtendedSelection);
@@ -59,7 +59,7 @@ void DragArea::startDrag(Qt::DropActions actions)
 	emit filesSent();
 }
 
-void DragArea::addFile(QFileInfo file)
+void DragArea::addFile(const QFileInfo& file)
 {
 	static QMimeDatabase mime;
 	auto type = mime.mimeTypeForFile(file);

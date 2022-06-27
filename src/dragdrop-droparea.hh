@@ -25,7 +25,7 @@ protected:
 	void dropEvent(QDropEvent* event) override;
 
 signals:
-	void filesReceived(QList<QUrl> urls);
+	void filesReceived(const QList<QUrl>& urls);
 };
 
 }; // namespace DragDrop

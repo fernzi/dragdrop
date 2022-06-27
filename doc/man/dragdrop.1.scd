@@ -29,6 +29,9 @@ The options are as follows:
 *-u, --uris*
 	Print URIs instead of file paths on drop.
 
+*--dirs-first*
+	List directories before files on the source dialog.
+
 *-h, --help*
 	Show help information, then exit.
 
