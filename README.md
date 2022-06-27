@@ -1,5 +1,7 @@
 # DragDrop
 
+![AppImage Status](https://github.com/fernzi/dragdrop/actions/workflows/appimage.yml/badge.svg)
+
 A small drag-and-drop source for the command line.
 
 Have you ever noticed how a lot of things
