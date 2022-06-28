@@ -1,4 +1,4 @@
-name: Build AppImage
+name: AppImage Build
 
 on:
   push:
@@ -7,21 +7,26 @@ on:
     paths-ignore:
       - 'doc/**'
       - '**.md'
+      - '.editorconfig'
+      - '.gitignore'
   pull_request:
     branches:
       - master
     paths-ignore:
       - 'doc/**'
       - '**.md'
+      - '.editorconfig'
+      - '.gitignore'
 
 jobs:
-  build-appimage:
+  appimage-build:
+    name: Linux x86_64 (Continous)
     runs-on: ubuntu-18.04
+
     steps:
       - uses: actions/checkout@v3
 
-      - name: Cache Qt
-        id:   cache-qt
+      - id:   cache
         uses: actions/cache@v3
         with:
           path: ${{ runner.workspace }}/Qt
@@ -30,30 +35,18 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-          cached: ${{ steps.cache-qt.outputs.cache-hit }}
+          cached: ${{ steps.cache.outputs.cache-hit }}
 
       - name: Install Dependencies
         run:  sudo apt-get install -y ninja-build
 
-      - name: Configure
-        run:  cmake -S . -B build
-          -G Ninja
-          --install-prefix /usr
-          -DCMAKE_BUILD_TYPE=Release
-
       - name: Build
-        run:  cmake --build build
-
-      - name: Install
-        run:  DESTDIR=appdir cmake --install build
+        run:  etc/script/build
 
       - name: Package
         id:   package
         run: |
-          wget -c -nv https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
-          wget -c -nv https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
-          chmod +x linuxdeploy-*.AppImage
-          ./linuxdeploy-x86_64.AppImage --appdir appdir --plugin qt --output appimage
+          etc/script/package
           printf '::set-output name=appimage::%s' DragDrop-*.AppImage
 
       - uses: actions/upload-artifact@v3

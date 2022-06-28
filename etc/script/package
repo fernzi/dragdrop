@@ -1,0 +1,19 @@
+#!/bin/sh -efu
+ld_url='https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage'
+qt_url='https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage'
+
+if command -v curl >/dev/null 2>&1; then
+	curl -sLOC- "$ld_url"
+	curl -sLOC- "$qt_url"
+else
+	wget -c -nv "$ld_url"
+	wget -c -nv "$qt_url"
+fi
+chmod +x "${ld_url##*/}" "${qt_url##*/}"
+
+DESTDIR=appdir cmake --install build
+
+"./${ld_url##*/}" \
+	--appdir appdir \
+	--plugin qt \
+	--output appimage

@@ -1,0 +1,9 @@
+#!/bin/sh -efu
+if command -v ninja >/dev/null 2>&1; then
+	use_ninja=-GNinja
+fi
+
+cmake -S . -B build ${use_ninja:-} \
+	-DCMAKE_BUILD_TYPE=Release \
+	--install-prefix /usr
+cmake --build build
