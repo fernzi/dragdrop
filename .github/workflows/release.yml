@@ -1,26 +1,13 @@
-name: AppImage Build
+name: AppImage Release
 
 on:
   push:
-    branches:
-      - master
-    paths-ignore:
-      - 'doc/**'
-      - '**.md'
-      - '.editorconfig'
-      - '.gitignore'
-  pull_request:
-    branches:
-      - master
-    paths-ignore:
-      - 'doc/**'
-      - '**.md'
-      - '.editorconfig'
-      - '.gitignore'
+    tags:
+      - v*
 
 jobs:
   build:
-    name: Linux x86_64 (Continuous)
+    name: Linux x86_64 (Release)
     runs-on: ubuntu-18.04
 
     steps:
@@ -39,6 +26,9 @@ jobs:
 
       - name: Install dependencies
         run:  sudo apt-get install -y ninja-build
+
+      - name: Determine version
+        run:  printf "VERSION=%s\n" "${GITHUB_REF##*/v}" >> "${GITHUB_ENV}"
 
       - name: Build
         run:  etc/script/build
@@ -65,23 +55,9 @@ jobs:
       - name: Inspect downloaded artifacts
         run:  ls -lFR
 
-      - name: Delete existing continuous tag
-        uses: dev-drprasad/delete-tag-and-release@v0.2.0
-        with:
-          tag_name: continuous
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
-          name: Continuous Build
-          tag: continuous
-          body: >
-            AppImage built from the latest commit.
-            [Build log](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).
-          commit: ${{ github.sha }}
+          name: DragDrop ${{ env.VERSION }}
           artifacts: AppImage/DragDrop-*.AppImage*
-          prerelease: true
-          allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}

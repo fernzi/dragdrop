@@ -17,7 +17,8 @@ export ARCH=x86_64
 export DISABLE_COPYRIGHT_FILES_DEPLOYMENT=1
 if test -n "${GITHUB_REPOSITORY:-}"; then
 	gh_info="$(echo ${GITHUB_REPOSITORY} | sed 's:/:|:')"
-	export UPDATE_INFORMATION="gh-releases-zsync|${gh_info}|${VERSION:-continuous}|DragDrop-*${ARCH}.AppImage.zsync"
+	gh_tag="${VERSION:+latest}"
+	export UPDATE_INFORMATION="gh-releases-zsync|${gh_info}|${gh_tag:-continuous}|DragDrop-*${ARCH}.AppImage.zsync"
 fi
 
 "./${ld_url##*/}" \
