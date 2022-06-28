@@ -28,7 +28,7 @@ jobs:
         run:  sudo apt-get install -y ninja-build
 
       - name: Determine version
-        run:  printf "VERSION=%s\n" "${GITHUB_REF##*/v}" >> "${GITHUB_ENV}"
+        run:  printf 'VERSION=%s\n' "${GITHUB_REF##*/v}" >> "${GITHUB_ENV}"
 
       - name: Build
         run:  etc/script/build
@@ -54,6 +54,10 @@ jobs:
 
       - name: Inspect downloaded artifacts
         run:  ls -lFR
+
+      - name: Determine version
+        run:  printf 'VERSION=%s\n'
+          $(echo AppImage/DragDrop-*.AppImage | cut -f2 -d-) >> "${GITHUB_ENV}"
 
       - name: Create release
         uses: ncipollo/release-action@v1
