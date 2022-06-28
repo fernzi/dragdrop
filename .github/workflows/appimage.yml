@@ -19,8 +19,8 @@ on:
       - '.gitignore'
 
 jobs:
-  appimage-build:
-    name: Linux x86_64 (Continous)
+  build:
+    name: Linux x86_64 (Continuous)
     runs-on: ubuntu-18.04
 
     steps:
@@ -37,7 +37,7 @@ jobs:
         with:
           cached: ${{ steps.cache.outputs.cache-hit }}
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run:  sudo apt-get install -y ninja-build
 
       - name: Build
@@ -45,11 +45,40 @@ jobs:
 
       - name: Package
         id:   package
-        run: |
-          etc/script/package
-          printf '::set-output name=appimage::%s' DragDrop-*.AppImage
+        run:  etc/script/package
 
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ steps.package.outputs.appimage }}
-          path: ${{ steps.package.outputs.appimage }}
+          name: AppImage
+          path: DragDrop-*.AppImage*
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs:
+      - build
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Inspect downloaded artifacts
+        run:  ls -lFR
+
+      - name: Delete existing continuous tag
+        uses: dev-drprasad/delete-tag-and-release@v0.2.0
+        with:
+          tag_name: continuous
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          name: Continuous Build
+          tag: continuous
+          commit: ${{ github.sha }}
+          artifacts: AppImage/DragDrop-*.AppImage*
+          prerelease: true
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}

@@ -102,7 +102,7 @@ CMakeLists.txt.user*
 ### AppImage
 /AppDir
 /appdir
-*.AppImage
+*.AppImage*
 
 
 ### Emacs ###
