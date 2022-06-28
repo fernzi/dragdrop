@@ -5,8 +5,6 @@
 [![GitHub Release](https://img.shields.io/github/v/release/fernzi/dragdrop)][gh-rel]
 [![AppImage Build](https://github.com/fernzi/dragdrop/actions/workflows/appimage.yml/badge.svg)][gh-bld]
 
-A small drag-and-drop source for the command line.
-
 Have you ever noticed how a lot of things
 (specially web apps) now expect you to drag files into them,
 rather than using the good ol' file browser dialog?
