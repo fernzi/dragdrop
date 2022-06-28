@@ -77,6 +77,9 @@ jobs:
         with:
           name: Continuous Build
           tag: continuous
+          body: >
+            AppImage built from the latest commit.
+            [Build log](https://github.org/${{ github.repository }}/actions/runs/${{ github.run_id }}).
           commit: ${{ github.sha }}
           artifacts: AppImage/DragDrop-*.AppImage*
           prerelease: true
