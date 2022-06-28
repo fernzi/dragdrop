@@ -2,9 +2,7 @@
 if command -v ninja >/dev/null 2>&1; then
 	use_ninja=-GNinja
 fi
-if test -n "${VERSION:-}"; then
-	build_type=Release
-fi
+build_type=${VERSION:+Release}
 
 cmake -S . -B build ${use_ninja:-} \
 	-DCMAKE_BUILD_TYPE="${build_type:-RelWithDebInfo}" \
