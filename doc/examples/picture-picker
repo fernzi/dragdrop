@@ -1,4 +1,4 @@
 #!/bin/sh -efu
 # Show all the user's pictures in a dialog.
 
-dragdrop $(find "$HOME/Pictures" -type f)
+find "$HOME/Pictures" -type f -exec dragdrop {} +
