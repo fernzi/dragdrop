@@ -45,37 +45,3 @@ jobs:
         with:
           name: AppImage
           path: DragDrop-*.AppImage*
-
-  release:
-    name: Create Release
-    runs-on: ubuntu-latest
-    needs:
-      - build
-
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-
-      - name: Inspect downloaded artifacts
-        run:  ls -lFR
-
-      - name: Delete existing continuous tag
-        uses: dev-drprasad/delete-tag-and-release@v0.2.0
-        with:
-          tag_name: continuous
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create release
-        uses: ncipollo/release-action@v1
-        with:
-          name: Continuous Build
-          tag: continuous
-          body: >
-            AppImage built from the latest commit.
-            [Build log](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).
-          commit: ${{ github.sha }}
-          artifacts: AppImage/DragDrop-*.AppImage*
-          prerelease: true
-          allowUpdates: true
-          token: ${{ secrets.GITHUB_TOKEN }}
