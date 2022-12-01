@@ -21,67 +21,40 @@ on:
 jobs:
   build:
     name: Linux x86_64 (Continuous)
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
+    container: debian:oldstable-slim
 
     steps:
       - uses: actions/checkout@v3
 
-      - id:   cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ runner.workspace }}/Qt
-          key: ${{ runner.os }}-QtCache
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y \
+            build-essential qtbase5-dev python3-pip p7zip-full unzip curl
+          curl -sLOC- 'http://http.us.debian.org/debian/pool/main/x/xcb-util/libxcb-util1_0.4.0-1+b1_amd64.deb'
+          dpkg -i libxcb-util1*.deb
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v3
         with:
-          cached: ${{ steps.cache.outputs.cache-hit }}
+          install-deps: false
+          cache: true
+          setup-python: false
 
-      - name: Install dependencies
-        run:  sudo apt-get install -y ninja-build
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
 
       - name: Build
         run:  etc/script/build
 
       - name: Package
         id:   package
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: 1
         run:  etc/script/package
 
       - uses: actions/upload-artifact@v3
         with:
           name: AppImage
           path: DragDrop-*.AppImage*
-
-  release:
-    name: Create Release
-    runs-on: ubuntu-latest
-    needs:
-      - build
-
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-
-      - name: Inspect downloaded artifacts
-        run:  ls -lFR
-
-      - name: Delete existing continuous tag
-        uses: dev-drprasad/delete-tag-and-release@v0.2.0
-        with:
-          tag_name: continuous
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create release
-        uses: ncipollo/release-action@v1
-        with:
-          name: Continuous Build
-          tag: continuous
-          body: >
-            AppImage built from the latest commit.
-            [Build log](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).
-          commit: ${{ github.sha }}
-          artifacts: AppImage/DragDrop-*.AppImage*
-          prerelease: true
-          allowUpdates: true
-          token: ${{ secrets.GITHUB_TOKEN }}

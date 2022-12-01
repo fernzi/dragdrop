@@ -8,24 +8,29 @@ on:
 jobs:
   build:
     name: Linux x86_64 (Release)
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
+    container: debian:oldstable-slim
 
     steps:
       - uses: actions/checkout@v3
 
-      - id:   cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ runner.workspace }}/Qt
-          key: ${{ runner.os }}-QtCache
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y \
+            build-essential qtbase5-dev python3-pip p7zip-full unzip curl
+          curl -sLOC- 'http://http.us.debian.org/debian/pool/main/x/xcb-util/libxcb-util1_0.4.0-1+b1_amd64.deb'
+          dpkg -i libxcb-util1*.deb
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v3
         with:
-          cached: ${{ steps.cache.outputs.cache-hit }}
+          install-deps: false
+          cache: true
+          setup-python: false
 
-      - name: Install dependencies
-        run:  sudo apt-get install -y ninja-build
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
 
       - name: Determine version
         run:  printf 'VERSION=%s\n' "${GITHUB_REF##*/v}" >> "${GITHUB_ENV}"
@@ -35,6 +40,8 @@ jobs:
 
       - name: Package
         id:   package
+        env:
+          APPIMAGE_EXTRACT_AND_RUN: 1
         run:  etc/script/package
 
       - uses: actions/upload-artifact@v3
