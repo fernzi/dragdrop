@@ -10,6 +10,7 @@
 #include "dragdrop-droparea.hh"
 #include <QVBoxLayout>
 #include <QTextStream>
+#include <QTimer>
 
 namespace DragDrop {
 
@@ -39,7 +40,7 @@ Window::Window(const QList<QFileInfo>& files, const Options& opts,
 void Window::onFilesSent()
 {
 	if (m_opts & Option::Once) {
-		close();
+		QTimer::singleShot(500, this, &Window::close);
 	}
 }
 
