@@ -6,7 +6,7 @@ dragdrop - file drag-and-drop source
 
 # SYNOPSIS
 
-*dragdrop* [*-ophv*] [_files_...]
+*dragdrop* [*-0houv*] [_files_...]
 
 # DESCRIPTION
 
@@ -22,6 +22,9 @@ the window will act as a sink in which files can be dropped
 and their paths will be printed to the standard output.
 
 The options are as follows:
+
+*-0, --null*
+	Separate printed paths with a null character.
 
 *-o, --once*
 	Exit after a single drag or drop.

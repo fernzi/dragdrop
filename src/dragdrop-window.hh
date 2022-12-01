@@ -23,6 +23,7 @@ public:
 		None = 0,
 		URIs = 1 << 0,
 		Once = 1 << 1,
+		Null = 1 << 2,
 	};
 	Q_DECLARE_FLAGS(Options, Option)
 
@@ -36,6 +37,7 @@ public slots:
 
 private:
 	const Options m_opts;
+	const char m_term;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Window::Options)

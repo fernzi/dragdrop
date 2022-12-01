@@ -27,6 +27,8 @@ Application::Application(int& argc, char** argv)
 			tr("Exit after a single drag or drop.")},
 		{{"u", "uris"},
 			tr("Print URIs instead of paths on drop.")},
+		{{"0", "null"},
+			tr("Separate printed paths with a null character.")},
 		{"dirs-first",
 			tr("List directories before files on the source dialog")},
 	});
@@ -48,6 +50,7 @@ int Application::exec()
 	}
 
 	const auto opts = Window::Options()
+		.setFlag(Window::Option::Null, parser.isSet(QStringLiteral("null")))
 		.setFlag(Window::Option::URIs, parser.isSet(QStringLiteral("uris")))
 		.setFlag(Window::Option::Once, parser.isSet(QStringLiteral("once")));
 

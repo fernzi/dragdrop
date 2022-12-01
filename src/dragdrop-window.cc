@@ -17,6 +17,7 @@ Window::Window(const QList<QFileInfo>& files, const Options& opts,
                QWidget* parent)
 	: QDialog(parent)
 	, m_opts(opts)
+	, m_term(opts & Option::Null ? '\0' : '\n')
 {
 	setWindowTitle(tr("Drag and Drop"));
 
@@ -47,7 +48,8 @@ void Window::onFilesReceived(const QList<QUrl>& files)
 	QTextStream out(stdout);
 	for (const auto& f : files) {
 		out << (m_opts & Option::URIs ? f.url() : f.path())
-		    << Qt::endl;
+		    << m_term
+		    << Qt::flush;
 	}
 
 	if (m_opts & Option::Once) {
