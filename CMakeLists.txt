@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.18..3.23)
 
 project(
 	dragdrop
-	VERSION 1.0.0
+	VERSION 1.1.0
 	LANGUAGES CXX
 )
 
@@ -25,10 +25,15 @@ find_package(
 find_program(SCDOC scdoc)
 if(SCDOC)
 	set(MAN_TGT ${PROJECT_NAME}.1)
+	configure_file(
+		${CMAKE_SOURCE_DIR}/doc/man/${MAN_TGT}.scd
+		${MAN_TGT}.scd
+		@ONLY
+	)
 	add_custom_command(
-		COMMAND ${SCDOC} < ${CMAKE_SOURCE_DIR}/doc/man/${MAN_TGT}.scd > ${MAN_TGT}
+		COMMAND ${SCDOC} < ${MAN_TGT}.scd > ${MAN_TGT}
 		COMMENT "Building manpage ${MAN_TGT}"
-		MAIN_DEPENDENCY doc/man/${MAN_TGT}.scd
+		MAIN_DEPENDENCY ${MAN_TGT}.scd
 		OUTPUT ${MAN_TGT}
 		VERBATIM
 	)

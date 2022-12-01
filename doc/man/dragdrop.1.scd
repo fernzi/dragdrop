@@ -1,4 +1,4 @@
-DRAGDROP(1)
+DRAGDROP(1) "DragDrop @PROJECT_VERSION@"
 
 # NAME
 
@@ -43,7 +43,7 @@ The options are as follows:
 
 # AUTHORS
 
-Program by Fern Zapata. Current sources can be found at:
+Written by Fern Zapata. Current sources can be found at:
 	https://github.com/fernzi/dragdrop
 
 # COPYRIGHT
