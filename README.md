@@ -32,7 +32,7 @@ dragdrop
 on its own to get a sink to drop files into,
 which will then print their names into the standard output.
 
-See the manual at [dragdrop(1)](doc/man/dragdrop.1.scd)
+See the manual at [dragdrop(1)](doc/man/dragdrop.1.md)
 for all the detailed options,
 and maybe check the [examples](doc/examples)
 to see how you can use it in a script.
@@ -63,10 +63,10 @@ but you'll probably have some luck with these:
 
 ```sh
 # For Debian, Ubuntu, and derivatives:
-apt install build-essential cmake qtbase5-dev scdoc
+apt install build-essential cmake qtbase5-dev go-md2man
 
 # For Arch, Manjaro, and the rest:
-pacman -S base-devel cmake qt5-base scdoc
+pacman -S base-devel cmake qt5-base go-md2man
 ```
 
 Once that's installed,

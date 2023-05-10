@@ -22,27 +22,6 @@ find_package(
 	REQUIRED
 )
 
-find_program(SCDOC scdoc)
-if(SCDOC)
-	set(MAN_TGT ${PROJECT_NAME}.1)
-	configure_file(
-		${CMAKE_SOURCE_DIR}/doc/man/${MAN_TGT}.scd
-		${MAN_TGT}.scd
-		@ONLY
-	)
-	add_custom_command(
-		COMMAND ${SCDOC} < ${MAN_TGT}.scd > ${MAN_TGT}
-		COMMENT "Building manpage ${MAN_TGT}"
-		MAIN_DEPENDENCY ${MAN_TGT}.scd
-		OUTPUT ${MAN_TGT}
-		VERBATIM
-	)
-	add_custom_target(
-		man ALL
-		DEPENDS ${MAN_TGT}
-	)
-endif()
-
 include(CheckIPOSupported)
 check_ipo_supported(RESULT IPO_SUPPORTED)
 
@@ -100,9 +79,5 @@ install(
 	FILES ${CMAKE_SOURCE_DIR}/etc/xdg/dragdrop.svg
 	DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/scalable/apps
 )
-if(MAN_TGT)
-	install(
-		FILES ${CMAKE_BINARY_DIR}/${MAN_TGT}
-		DESTINATION "${CMAKE_INSTALL_MANDIR}/man1"
-	)
-endif()
+
+add_subdirectory(doc/man)

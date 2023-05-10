@@ -1,16 +1,16 @@
-DRAGDROP(1) "DragDrop @PROJECT_VERSION@"
+# DRAGDROP 1 2023-04-13 "DragDrop @PROJECT_VERSION@"
 
-# NAME
+## NAME
 
 dragdrop - file drag-and-drop source
 
-# SYNOPSIS
+## SYNOPSIS
 
-*dragdrop* [*-0houv*] [_files_...]
+**dragdrop** [**-0houv**] [_files_...]
 
-# DESCRIPTION
+## DESCRIPTION
 
-The *dragdrop* utility acts as a source or sink
+The **dragdrop** utility acts as a source or sink
 for dragging and dropping files into programs running in a terminal emulator.
 
 When started with file names as its arguments,
@@ -23,35 +23,35 @@ and their paths will be printed to the standard output.
 
 The options are as follows:
 
-*-0, --null*
-	Separate printed paths with a null character.
+**-0, --null**
+: Separate printed paths with a null character.
 
-*-o, --once*
-	Exit after a single drag or drop.
+**-o, --once**
+: Exit after a single drag or drop.
 
-*-u, --uris*
-	Print URIs instead of file paths on drop.
+**-u, --uris**
+: Print URIs instead of file paths on drop.
 
-*--dirs-first*
-	List directories before files on the source dialog.
+**--dirs-first**
+: List directories before files on the source dialog.
 
-*-h, --help*
-	Show help information, then exit.
+**-h, --help**
+: Show help information, then exit.
 
-*-v, --version*
-	Show version information, then exit.
+**-v, --version**
+: Show version information, then exit.
 
-# AUTHORS
+## AUTHORS
 
 Written by Fern Zapata. Current sources can be found at:
-	https://github.com/fernzi/dragdrop
+: https://github.com/fernzi/dragdrop
 
-# COPYRIGHT
+## COPYRIGHT
 
 Copyright © 2022 Fern Zapata.
 
 License GPLv3+: GNU GPL version 3 or later:
-	https://gnu.org/licenses/gpl.html
+: https://gnu.org/licenses/gpl.html
 
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
