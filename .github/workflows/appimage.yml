@@ -6,7 +6,9 @@ on:
       - master
     paths-ignore:
       - 'doc/**'
+      - '**.el'
       - '**.md'
+      - '**.scm'
       - '.editorconfig'
       - '.gitignore'
   pull_request:
@@ -14,7 +16,9 @@ on:
       - master
     paths-ignore:
       - 'doc/**'
+      - '**.el'
       - '**.md'
+      - '**.scm'
       - '.editorconfig'
       - '.gitignore'
 
