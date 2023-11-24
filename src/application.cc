@@ -3,8 +3,8 @@
  * or, at your option, any later version. If a copy of it was not
  * included with this file, see https://www.gnu.org/licenses/. */
 
-#include "dragdrop-application.hh"
-#include "dragdrop-window.hh"
+#include "application.hh"
+#include "window.hh"
 #include <QFileInfo>
 
 namespace DragDrop {
@@ -60,3 +60,12 @@ int Application::exec()
 }
 
 }; // namespace DragDrop
+
+int main(int argc, char** argv)
+{
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	DragDrop::Application::setAttribute(Qt::AA_EnableHighDpiScaling);
+	DragDrop::Application::setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
+	return DragDrop::Application(argc, argv).exec();
+}

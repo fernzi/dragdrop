@@ -1,13 +1,11 @@
-/* DragDrop --- Drag and drop source for the command line
- * Copyright © 2022 Fern Zapata
- * This program is subject to the terms of the GNU GPL, either
- * version 3 of the License or (at your option) any later version.
- * You should have received a copy of the License along with this
- * file. If not, see <https://www.gnu.org/licenses/>. */
+/* Copyright © 2022-2023 Fern Zapata
+ * This program is subject to the terms of the GNU GPL, version 3
+ * or, at your option, any later version. If a copy of it was not
+ * included with this file, see https://www.gnu.org/licenses/. */
 
-#include "dragdrop-window.hh"
-#include "dragdrop-dragarea.hh"
-#include "dragdrop-droparea.hh"
+#include "window.hh"
+#include "dragarea.hh"
+#include "droparea.hh"
 #include <QVBoxLayout>
 #include <QTextStream>
 #include <QTimer>

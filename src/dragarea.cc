@@ -3,7 +3,7 @@
  * or, at your option, any later version. If a copy of it was not
  * included with this file, see https://www.gnu.org/licenses/. */
 
-#include "dragdrop-dragarea.hh"
+#include "dragarea.hh"
 #include <QDrag>
 #include <QListWidgetItem>
 #include <QMimeData>

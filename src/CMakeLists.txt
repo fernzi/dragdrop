@@ -18,15 +18,14 @@ check_ipo_supported(RESULT IPO_SUPPORTED)
 set(BIN_NAME ${PROJECT_NAME} CACHE STRING "Executable name")
 
 set(PROJECT_SOURCES
-	dragdrop-application.cc
-	dragdrop-application.hh
-	dragdrop-dragarea.cc
-	dragdrop-dragarea.hh
-	dragdrop-droparea.cc
-	dragdrop-droparea.hh
-	dragdrop-window.cc
-	dragdrop-window.hh
-	dragdrop.cc
+	application.cc
+	application.hh
+	dragarea.cc
+	dragarea.hh
+	droparea.cc
+	droparea.hh
+	window.cc
+	window.hh
 )
 
 add_executable(${BIN_NAME} ${PROJECT_SOURCES})
