@@ -1,9 +1,7 @@
-/* DragDrop --- Drag and drop source for the command line
- * Copyright © 2022 Fern Zapata
- * This program is subject to the terms of the GNU GPL, either
- * version 3 of the License or (at your option) any later version.
- * You should have received a copy of the License along with this
- * file. If not, see <https://www.gnu.org/licenses/>. */
+/* Copyright © 2022-2023 Fern Zapata
+ * This program is subject to the terms of the GNU GPL, version 3
+ * or, at your option, any later version. If a copy of it was not
+ * included with this file, see https://www.gnu.org/licenses/. */
 
 #include "dragdrop-application.hh"
 #include "dragdrop-window.hh"
@@ -41,7 +39,9 @@ int Application::exec()
 	int last_dir = 0;
 	bool dirs_1st = parser.isSet(QStringLiteral("dirs-first"));
 	const auto args = parser.positionalArguments();
-	for (const QFileInfo& file : args) {
+
+	for (const QString& filename : args) {
+		const QFileInfo file(filename);
 		if (dirs_1st && file.isDir()) {
 			files.insert(last_dir++, file);
 		} else if (file.exists()) {

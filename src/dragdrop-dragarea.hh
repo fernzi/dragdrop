@@ -1,15 +1,18 @@
-/* DragDrop --- Drag and drop source for the command line
- * Copyright © 2022 Fern Zapata
- * This program is subject to the terms of the GNU GPL, either
- * version 3 of the License or (at your option) any later version.
- * You should have received a copy of the License along with this
- * file. If not, see <https://www.gnu.org/licenses/>. */
+/* Copyright © 2022-2023 Fern Zapata
+ * This program is subject to the terms of the GNU GPL, version 3
+ * or, at your option, any later version. If a copy of it was not
+ * included with this file, see https://www.gnu.org/licenses/. */
 
 #ifndef DRAGDROP_DRAGAREA_HH
 #define DRAGDROP_DRAGAREA_HH
 
 #include <QListWidget>
 #include <QFileInfo>
+
+#define DAREA_REF
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#define DAREA_REF &
+#endif
 
 namespace DragDrop {
 
@@ -26,7 +29,7 @@ public:
 protected:
 	void startDrag(Qt::DropActions actions) override;
 	QStringList mimeTypes() const override;
-	QMimeData* mimeData(const QList<QListWidgetItem*> items) const override;
+	QMimeData* mimeData(const QList<QListWidgetItem*>DAREA_REF items) const override;
 
 signals:
 	void filesSent();

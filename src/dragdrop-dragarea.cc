@@ -1,9 +1,7 @@
-/* DragDrop --- Drag and drop source for the command line
- * Copyright © 2022 Fern Zapata
- * This program is subject to the terms of the GNU GPL, either
- * version 3 of the License or (at your option) any later version.
- * You should have received a copy of the License along with this
- * file. If not, see <https://www.gnu.org/licenses/>. */
+/* Copyright © 2022-2023 Fern Zapata
+ * This program is subject to the terms of the GNU GPL, version 3
+ * or, at your option, any later version. If a copy of it was not
+ * included with this file, see https://www.gnu.org/licenses/. */
 
 #include "dragdrop-dragarea.hh"
 #include <QDrag>
@@ -42,7 +40,7 @@ QStringList DragArea::mimeTypes() const
 	return QStringList(QStringLiteral("text/uri-list"));
 }
 
-QMimeData* DragArea::mimeData(const QList<QListWidgetItem*> items) const
+QMimeData* DragArea::mimeData(const QList<QListWidgetItem*>DAREA_REF items) const
 {
 	auto data = new QMimeData;
 	QList<QUrl> urls;
