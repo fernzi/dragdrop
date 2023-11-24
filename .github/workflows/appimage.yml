@@ -26,7 +26,7 @@ jobs:
   build:
     name: Linux x86_64 (Continuous)
     runs-on: ubuntu-latest
-    container: debian:oldstable-slim
+    container: debian:buster-slim
 
     steps:
       - uses: actions/checkout@v3
@@ -50,13 +50,13 @@ jobs:
         uses: lukka/get-cmake@latest
 
       - name: Build
-        run:  etc/script/build
+        run:  etc/ci/build
 
       - name: Package
         id:   package
         env:
           APPIMAGE_EXTRACT_AND_RUN: 1
-        run:  etc/script/package
+        run:  etc/ci/package
 
       - uses: actions/upload-artifact@v3
         with:
