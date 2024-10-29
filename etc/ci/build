@@ -1,4 +1,4 @@
-#!/bin/sh -efu
+#!/bin/sh -efux
 if command -v ninja >/dev/null 2>&1; then
 	use_ninja=-GNinja
 fi
@@ -6,5 +6,5 @@ build_type=${VERSION:+Release}
 
 cmake -S . -B build ${use_ninja:-} \
 	-DCMAKE_BUILD_TYPE="${build_type:-RelWithDebInfo}" \
-	--install-prefix /usr
+	-DCMAKE_INSTALL_PREFIX="/usr"
 cmake --build build
