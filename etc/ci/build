@@ -6,5 +6,5 @@ build_type=${VERSION:+Release}
 
 cmake -S . -B build ${use_ninja:-} \
 	-DCMAKE_BUILD_TYPE="${build_type:-RelWithDebInfo}" \
-	--install-prefix /usr
+	-DCMAKE_INSTALL_PREFIX="/usr"
 cmake --build build
