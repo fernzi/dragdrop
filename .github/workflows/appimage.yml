@@ -35,7 +35,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y --no-install-recommends \
-            build-essential cmake qtbase5-dev curl
+            build-essential cmake qtbase5-dev curl ca-certificates
 
       - name: Build
         run:  etc/ci/build
