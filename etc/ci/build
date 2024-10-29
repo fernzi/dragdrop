@@ -1,4 +1,4 @@
-#!/bin/sh -efu
+#!/bin/sh -efux
 if command -v ninja >/dev/null 2>&1; then
 	use_ninja=-GNinja
 fi
