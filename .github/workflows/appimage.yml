@@ -29,7 +29,7 @@ jobs:
     container: debian:buster-slim
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
@@ -40,7 +40,7 @@ jobs:
           dpkg -i libxcb-util1*.deb
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           install-deps: false
           cache: true
@@ -58,7 +58,7 @@ jobs:
           APPIMAGE_EXTRACT_AND_RUN: 1
         run:  etc/ci/package
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: AppImage
           path: DragDrop-*.AppImage*
