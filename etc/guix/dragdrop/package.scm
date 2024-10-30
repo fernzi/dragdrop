@@ -11,8 +11,7 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix git)
   #:use-module (guix git-download)
-  #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (ice-9 regex))
+  #:use-module ((guix licenses) #:prefix license:))
 
 (define %source-dir
   (dirname (dirname (dirname (current-source-directory)))))
@@ -21,22 +20,7 @@
   (or (git-predicate %source-dir)
       (const #t)))
 
-(define (get-version path)
-  (let ((regx (make-regexp "^\\s*VERSION\\s+([0-9](\\.[0-9])*)")))
-    (call-with-input-file path
-      (lambda (port)
-        (let next ((line (read-line port)))
-          (and (not (eof-object? line))
-               (let ((match (regexp-exec regx line)))
-                 (if match
-                     (match:substring match 1)
-                     (next (read-line port))))))))))
-
-(define %vcs-version
-  (or (false-if-git-not-found
-       (with-repository %source-dir repo
-         (describe-format (describe-workdir repo))))
-      (get-version (string-append %source-dir "/CMakeLists.txt"))))
+(define %vcs-version "9999")
 
 (define-public dragdrop
   (package
