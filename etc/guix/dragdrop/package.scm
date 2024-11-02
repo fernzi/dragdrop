@@ -13,14 +13,12 @@
   #:use-module (guix git-download)
   #:use-module ((guix licenses) #:prefix license:))
 
-(define %source-dir
-  (dirname (dirname (dirname (current-source-directory)))))
-
 (define vcs-file?
-  (or (git-predicate %source-dir)
+  (or (git-predicate
+       (string-append (current-source-directory) "/../../.."))
       (const #t)))
 
-(define %vcs-version "9999")
+(define %vcs-version "9999-git")
 
 (define-public dragdrop
   (package
@@ -28,7 +26,7 @@
     (version %vcs-version)
     (source
      (local-file
-      %source-dir (git-file-name name version)
+      "../../.." (git-file-name name version)
       #:recursive? #t
       #:select? vcs-file?))
     (build-system cmake-build-system)
