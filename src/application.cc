@@ -1,4 +1,4 @@
-/* Copyright © 2022-2023 Fern Zapata
+/* Copyright © 2022-2024 Fern Zapata
  * This program is subject to the terms of the GNU GPL, version 3
  * or, at your option, any later version. If a copy of it was not
  * included with this file, see https://www.gnu.org/licenses/. */
@@ -60,12 +60,3 @@ int Application::exec()
 }
 
 }; // namespace DragDrop
-
-int main(int argc, char** argv)
-{
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	DragDrop::Application::setAttribute(Qt::AA_EnableHighDpiScaling);
-	DragDrop::Application::setAttribute(Qt::AA_UseHighDpiPixmaps);
-#endif
-	return DragDrop::Application(argc, argv).exec();
-}

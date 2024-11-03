@@ -24,6 +24,7 @@ set(PROJECT_SOURCES
 	dragarea.hh
 	droparea.cc
 	droparea.hh
+	main.cc
 	window.cc
 	window.hh
 )
