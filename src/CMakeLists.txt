@@ -39,10 +39,6 @@ target_compile_definitions(
 	DRAGDROP_NAME="${BIN_NAME}"
 	DRAGDROP_VERSION="${PROJECT_VERSION}"
 )
-target_compile_features(
-	${BIN_NAME} PRIVATE
-	cxx_std_11
-)
 target_compile_options(
 	${BIN_NAME} PRIVATE
 	$<$<C_COMPILER_ID:MSVC>:/W3>
@@ -50,7 +46,6 @@ target_compile_options(
 )
 set_target_properties(
 	${BIN_NAME} PROPERTIES
-	CXX_EXTENSIONS OFF
 	$<$<IPO_SUPPORTED>:INTERPROCEDURAL_OPTIMIZATION_RELEASE ON>
 )
 
