@@ -1,169 +1,36 @@
-### C++ ###
-# Prerequisites
-*.d
+*
+!*/
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# Project
+!/.clang-format
+!/.clang-tidy
+!/.gitignore
+!/.gitmodules
+!/LICENSE
+!/README*.md
 
-# Precompiled Headers
-*.gch
-*.pch
+!/doc/**/*.md
+!/doc/**/*.png
+!/doc/examples/*
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+!/etc/xdg/*.desktop
+!/etc/xdg/*.svg
 
-# Fortran module files
-*.mod
-*.smod
+!/.github/**/*.yml
+!/etc/ci/*
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+# Guix
+!/.guix-authorizations
+!/.guix-channel
+!/.guix/**/*.scm
+!/etc/guix/**/*.scm
+!/guix.scm
 
-# Executables
-*.exe
-*.out
-*.app
-
-# Clangd Cache
-/.cache
-
-
-### CMake ###
-CMakeLists.txt.user
-CMakeCache.txt
-CMakeFiles
-CMakeScripts
-Testing
-Makefile
-cmake_install.cmake
-install_manifest.txt
-compile_commands.json
-CTestTestfile.cmake
-_deps
-
-### CMake Patch ###
-# External projects
-*-prefix/
-
-
-### Qt ###
-# C++ objects and libs
-*.so.*
-
-# Qt-es
-object_script.*.Release
-object_script.*.Debug
-*_plugin_import.cpp
-/.qmake.cache
-/.qmake.stash
-*.pro.user
-*.pro.user.*
-*.qbs.user
-*.qbs.user.*
-*.moc
-moc_*.cpp
-moc_*.h
-qrc_*.cpp
-ui_*.h
-*.qmlc
-*.jsc
-Makefile*
-/*build*
-*.qm
-*.prl
-
-# Qt unit tests
-target_wrapper.*
-
-# QtCreator
-*.autosave
-
-# QtCreator Qml
-*.qmlproject.user
-*.qmlproject.user.*
-
-# QtCreator CMake
-CMakeLists.txt.user*
-
-# QtCreator local machine specific files for imported projects
-*creator.user*
-
-*_qmlcache.qrc
-
-
-### AppImage
-/AppDir
-/appdir
-*.AppImage*
-
-
-### Emacs ###
-*~
-\#*\#
-/.emacs.desktop
-/.emacs.desktop.lock
-*.elc
-auto-save-list
-tramp
-.\#*
-
-# Org-mode
-.org-id-locations
-*_archive
-
-# flymake-mode
-*_flymake.*
-
-# eshell files
-/eshell/history
-/eshell/lastdir
-
-# reftex files
-*.rel
-
-# AUCTeX auto folder
-/auto/
-
-# Flycheck
-flycheck_*.el
-
-# server auth directory
-/server/
-
-# projectiles files
-.projectile
-
-# directory configuration
-.dir-locals-2.el
-
-# network security
-/network-security.data
-
-
-### Vim ###
-# Swap
-[._]*.s[a-v][a-z]
-!*.svg  # comment out if you don't need vector files
-[._]*.sw[a-p]
-[._]s[a-rt-v][a-z]
-[._]ss[a-gi-z]
-[._]sw[a-p]
-
-# Session
-Session.vim
-Sessionx.vim
-
-# Temporary
-.netrwhist
-# Auto-generated tag files
-tags
-# Persistent undo
-[._]*.un~
+# Code
+!/CMakePresets.json
+!/cmake/**/*.cmake
+!/src/**/*.cc
+!/src/**/*.hh
+!/test/**/*.cc
+!/test/**/*.hh
+!CMakeLists.txt
