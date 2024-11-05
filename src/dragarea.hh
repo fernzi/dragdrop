@@ -1,17 +1,17 @@
-/* Copyright © 2022-2023 Fern Zapata
+/* Copyright © 2022-2024 Fern Zapata
  * This program is subject to the terms of the GNU GPL, version 3
  * or, at your option, any later version. If a copy of it was not
  * included with this file, see https://www.gnu.org/licenses/. */
 
-#ifndef DRAGDROP_DRAGAREA_HH
-#define DRAGDROP_DRAGAREA_HH
+#pragma once
 
 #include <QListWidget>
 #include <QFileInfo>
 
-#define DAREA_REF
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #define DAREA_REF &
+#else
+#define DAREA_REF
 #endif
 
 namespace DragDrop {
@@ -36,5 +36,3 @@ signals:
 };
 
 }; // namespace DragDrop
-
-#endif // DRAGDROP_DRAGAREA_HH
