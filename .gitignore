@@ -11,6 +11,7 @@
 
 !/doc/**/*.md
 !/doc/**/*.png
+!/doc/**/CMakeLists.txt
 !/doc/examples/*
 
 !/etc/xdg/*.desktop
@@ -27,10 +28,12 @@
 !/guix.scm
 
 # Code
+!/CMakeLists.txt
 !/CMakePresets.json
 !/cmake/**/*.cmake
 !/src/**/*.cc
 !/src/**/*.hh
+!/src/**/CMakeLists.txt
 !/test/**/*.cc
 !/test/**/*.hh
-!CMakeLists.txt
+!/test/**/CMakeLists.txt
