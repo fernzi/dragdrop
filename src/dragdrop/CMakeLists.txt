@@ -9,12 +9,13 @@ endif()
 
 target_link_libraries(${BIN_NAME}
 PRIVATE
-	Qt${QT_VERSION_MAJOR}::Widgets
+	Qt${QT_VERSION_MAJOR}::Core
 )
 target_compile_definitions(${BIN_NAME}
 PRIVATE
-	DRAGDROP_NAME="${BIN_NAME}"
-	DRAGDROP_VERSION="${PROJECT_VERSION}"
+	LIBEXEC_DIR="${CMAKE_INSTALL_LIBEXECDIR}"
+	PROGRAM_NAME="${BIN_NAME}"
+	PROGRAM_VERSION="${PROJECT_VERSION}"
 )
 target_compile_options(${BIN_NAME}
 PRIVATE
@@ -22,9 +23,7 @@ PRIVATE
 	$<$<NOT:$<C_COMPILER_ID:MSVC>>:-Wall>
 )
 
-install(TARGETS ${BIN_NAME}
-	DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}
-)
+install(TARGETS ${BIN_NAME})
 
 if(QT_VERSION_MAJOR EQUAL 6)
 	qt_finalize_executable(${BIN_NAME})
