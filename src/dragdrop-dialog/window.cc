@@ -1,24 +1,25 @@
-/* Copyright © 2022-2023 Fern Zapata
- * This program is subject to the terms of the GNU GPL, version 3
- * or, at your option, any later version. If a copy of it was not
- * included with this file, see https://www.gnu.org/licenses/. */
+/* Copyright © 2022-2025 Fern Zapata
+ * This file is under the terms of the GNU GPL ver. 3, or (at your
+ * option) any later version. If a copy of the GPL wasn't included
+ * along with this file, see <https://www.gnu.org/licenses/>. */
 
 #include "window.hh"
 #include "dragarea.hh"
 #include "droparea.hh"
 #include <QVBoxLayout>
-#include <QTextStream>
-#include <QTimer>
 
 namespace DragDrop {
 
-Window::Window(const QList<QFileInfo>& files, const Options& opts,
-               QWidget* parent)
+Window::Window(const QList<QFileInfo>& files, QWidget* parent)
 	: QDialog(parent)
-	, m_opts(opts)
-	, m_term(opts & Option::Null ? '\0' : '\n')
+	, mOutput(this)
+	, mWriter(&mOutput)
 {
 	setWindowTitle(tr("Drag and Drop"));
+
+	if (not mOutput.open(stdout, QIODevice::WriteOnly)) {
+		close();
+	}
 
 	auto layout = new QVBoxLayout(this);
 	layout->setContentsMargins({});
@@ -37,23 +38,18 @@ Window::Window(const QList<QFileInfo>& files, const Options& opts,
 
 void Window::onFilesSent()
 {
-	if (m_opts & Option::Once) {
-		QTimer::singleShot(500, this, &Window::close);
-	}
+	mWriter.append(QCborSimpleType::Null);
+	mOutput.flush();
 }
 
 void Window::onFilesReceived(const QList<QUrl>& files)
 {
-	QTextStream out(stdout);
+	mWriter.startArray(files.length());
 	for (const auto& f : files) {
-		out << (m_opts & Option::URIs ? f.url() : f.path())
-		    << m_term
-		    << Qt::flush;
+		mWriter.append(f.url());
 	}
-
-	if (m_opts & Option::Once) {
-		close();
-	}
+	mWriter.endArray();
+	mOutput.flush();
 }
 
 }; // namespace DragDrop

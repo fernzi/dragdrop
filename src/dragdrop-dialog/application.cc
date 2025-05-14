@@ -1,7 +1,7 @@
-/* Copyright © 2022-2024 Fern Zapata
- * This program is subject to the terms of the GNU GPL, version 3
- * or, at your option, any later version. If a copy of it was not
- * included with this file, see https://www.gnu.org/licenses/. */
+/* Copyright © 2022-2025 Fern Zapata
+ * This file is under the terms of the GNU GPL ver. 3, or (at your
+ * option) any later version. If a copy of the GPL wasn't included
+ * along with this file, see <https://www.gnu.org/licenses/>. */
 
 #include "application.hh"
 #include "window.hh"
@@ -12,49 +12,17 @@ namespace DragDrop {
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 {
-	setApplicationName(QStringLiteral(DRAGDROP_NAME));
-	setApplicationVersion(QStringLiteral(DRAGDROP_VERSION));
-	parser.setApplicationDescription(
-		tr("Drag and drop in the terminal."));
-	parser.addHelpOption();
-	parser.addVersionOption();
-	parser.addPositionalArgument(
-		"files", tr("File to display"), tr("[files...]"));
-	parser.addOptions({
-		{{"o", "once"},
-			tr("Exit after a single drag or drop.")},
-		{{"u", "uris"},
-			tr("Print URIs instead of paths on drop.")},
-		{{"0", "null"},
-			tr("Separate printed paths with a null character.")},
-		{"dirs-first",
-			tr("List directories before files on the source dialog")},
-	});
-	parser.process(*this);
 }
 
-int Application::exec()
+auto Application::exec() -> int
 {
 	QList<QFileInfo> files;
-	int last_dir = 0;
-	bool dirs_1st = parser.isSet(QStringLiteral("dirs-first"));
-	const auto args = parser.positionalArguments();
 
-	for (const QString& filename : args) {
-		const QFileInfo file(filename);
-		if (dirs_1st && file.isDir()) {
-			files.insert(last_dir++, file);
-		} else if (file.exists()) {
-			files << file;
-		}
+	for (const auto& name : arguments().mid(1)) {
+		files << QFileInfo(name);
 	}
 
-	const auto opts = Window::Options()
-		.setFlag(Window::Option::Null, parser.isSet(QStringLiteral("null")))
-		.setFlag(Window::Option::URIs, parser.isSet(QStringLiteral("uris")))
-		.setFlag(Window::Option::Once, parser.isSet(QStringLiteral("once")));
-
-	Window win(files, opts);
+	Window win(files);
 	win.show();
 	return QApplication::exec();
 }
