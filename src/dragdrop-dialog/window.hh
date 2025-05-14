@@ -20,7 +20,7 @@ public:
 	Window(const QList<QFileInfo>& files, QWidget* parent = nullptr);
 
 public slots:
-	void onFilesReceived(const QList<QUrl>& files);
+	void onFilesRecv(const QList<QUrl>& files);
 	void onFilesSent();
 
 private:

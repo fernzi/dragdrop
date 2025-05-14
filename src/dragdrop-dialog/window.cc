@@ -6,7 +6,7 @@
 #include "window.hh"
 #include "dragarea.hh"
 #include "droparea.hh"
-#include <QVBoxLayout>
+#include <QStackedLayout>
 
 namespace DragDrop {
 
@@ -21,19 +21,19 @@ Window::Window(const QList<QFileInfo>& files, QWidget* parent)
 		close();
 	}
 
-	auto layout = new QVBoxLayout(this);
-	layout->setContentsMargins({});
-	QWidget* area = nullptr;
-	if (files.isEmpty()) {
-		area = new DropArea;
-		connect(static_cast<DropArea*>(area), &DropArea::filesReceived,
-		        this, &Window::onFilesReceived);
-	} else {
-		area = new DragArea(files);
-		connect(static_cast<DragArea*>(area), &DragArea::filesSent,
-		        this, &Window::onFilesSent);
+	auto layout = new QStackedLayout(this);
+	auto drop = new DropArea(this);
+	auto drag = new DragArea(files, this);
+
+	connect(drop, &DropArea::filesRecv, this, &Window::onFilesRecv);
+	connect(drag, &DragArea::filesSent, this, &Window::onFilesSent);
+
+	layout->addWidget(drop);
+	layout->addWidget(drag);
+
+	if (drag->count()) {
+		layout->setCurrentWidget(drag);
 	}
-	layout->addWidget(area);
 }
 
 void Window::onFilesSent()
@@ -42,7 +42,7 @@ void Window::onFilesSent()
 	mOutput.flush();
 }
 
-void Window::onFilesReceived(const QList<QUrl>& files)
+void Window::onFilesRecv(const QList<QUrl>& files)
 {
 	mWriter.startArray(files.length());
 	for (const auto& f : files) {

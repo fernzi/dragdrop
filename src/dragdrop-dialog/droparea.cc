@@ -1,7 +1,7 @@
-/* Copyright © 2022-2023 Fern Zapata
- * This program is subject to the terms of the GNU GPL, version 3
- * or, at your option, any later version. If a copy of it was not
- * included with this file, see https://www.gnu.org/licenses/. */
+/* Copyright © 2022-2025 Fern Zapata
+ * This file is under the terms of the GNU GPL ver. 3, or (at your
+ * option) any later version. If a copy of the GPL wasn't included
+ * along with this file, see <https://www.gnu.org/licenses/>. */
 
 #include "droparea.hh"
 #include <QDragEnterEvent>
@@ -16,7 +16,7 @@ DropArea::DropArea(QWidget* parent)
 	: QLabel(parent)
 {
 	setAcceptDrops(true);
-	setMargin(32);
+	setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 	setPixmap(QIcon::fromTheme("folder-open-symbolic").pixmap(48));
 }
 
@@ -29,7 +29,7 @@ void DropArea::dragEnterEvent(QDragEnterEvent* event)
 
 void DropArea::dropEvent(QDropEvent* event)
 {
-	emit filesReceived(event->mimeData()->urls());
+	emit filesRecv(event->mimeData()->urls());
 	event->setDropAction(Qt::CopyAction);
 	event->accept();
 }
