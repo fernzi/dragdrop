@@ -4,9 +4,6 @@
  * along with this file, see <https://www.gnu.org/licenses/>. */
 
 #include "window.hh"
-#include "dragarea.hh"
-#include "droparea.hh"
-#include <QStackedLayout>
 
 namespace DragDrop {
 
@@ -14,6 +11,9 @@ Window::Window(const QList<QFileInfo>& files, QWidget* parent)
 	: QDialog(parent)
 	, mOutput(this)
 	, mWriter(&mOutput)
+	, mLayout(this)
+	, mDrag(files, this)
+	, mDrop(this)
 {
 	setWindowTitle(tr("Drag and Drop"));
 
@@ -21,18 +21,14 @@ Window::Window(const QList<QFileInfo>& files, QWidget* parent)
 		close();
 	}
 
-	auto layout = new QStackedLayout(this);
-	auto drop = new DropArea(this);
-	auto drag = new DragArea(files, this);
+	connect(&mDrop, &DropArea::filesRecv, this, &Window::onFilesRecv);
+	connect(&mDrag, &DragArea::filesSent, this, &Window::onFilesSent);
 
-	connect(drop, &DropArea::filesRecv, this, &Window::onFilesRecv);
-	connect(drag, &DragArea::filesSent, this, &Window::onFilesSent);
+	mLayout.addWidget(&mDrop);
+	mLayout.addWidget(&mDrag);
 
-	layout->addWidget(drop);
-	layout->addWidget(drag);
-
-	if (drag->count()) {
-		layout->setCurrentWidget(drag);
+	if (mDrag.count()) {
+		mLayout.setCurrentWidget(&mDrag);
 	}
 }
 

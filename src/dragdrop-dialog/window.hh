@@ -5,9 +5,12 @@
 
 #pragma once
 
+#include "dragarea.hh"
+#include "droparea.hh"
 #include <QCborStreamWriter>
 #include <QDialog>
 #include <QFileInfo>
+#include <QStackedLayout>
 #include <QUrl>
 
 namespace DragDrop {
@@ -26,6 +29,9 @@ public slots:
 private:
 	QFile mOutput;
 	QCborStreamWriter mWriter;
+	QStackedLayout mLayout;
+	DragArea mDrag;
+	DropArea mDrop;
 };
 
 } // namespace DragDrop
