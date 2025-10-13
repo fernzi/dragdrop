@@ -13,7 +13,7 @@
 
 namespace DragDrop {
 
-DragArea::DragArea(const QList<QFileInfo>& files, QWidget* parent)
+DragArea::DragArea(QWidget* parent)
 	: QListWidget(parent)
 {
 	setSelectionMode(DragArea::ExtendedSelection);
@@ -22,29 +22,26 @@ DragArea::DragArea(const QList<QFileInfo>& files, QWidget* parent)
 	setFrameShape(DragArea::NoFrame);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setSizeAdjustPolicy(DragArea::AdjustToContents);
-
-	for (const auto& file : files) {
-		addFile(file);
-	}
 }
 
-QSize DragArea::sizeHint() const
+auto DragArea::sizeHint() const -> QSize
 {
 	auto screen_h = screen()->size().height();
 	return QSize(sizeHintForColumn(0),
-	             qMin(sizeHintForRow(0) * count(), screen_h / 3));
+		qMin(sizeHintForRow(0) * count(), screen_h / 3));
 }
 
-QStringList DragArea::mimeTypes() const
+auto DragArea::mimeTypes() const -> QStringList
 {
 	return QStringList(QStringLiteral("text/uri-list"));
 }
 
-QMimeData* DragArea::mimeData(const QList<QListWidgetItem*>DAREA_REF items) const
+auto DragArea::mimeData(
+	const QList<QListWidgetItem*> DAREA_REF items) const -> QMimeData*
 {
 	auto data = new QMimeData;
 	QList<QUrl> urls;
-	for (const auto& item : items) {
+	for (auto const& item : items) {
 		urls << item->data(Qt::UserRole).toUrl();
 	}
 	data->setUrls(urls);
@@ -57,7 +54,7 @@ void DragArea::startDrag(Qt::DropActions actions)
 	emit filesSent();
 }
 
-void DragArea::addFile(const QFileInfo& file)
+void DragArea::addFile(QFileInfo const& file)
 {
 	static QMimeDatabase mime;
 	auto type = mime.mimeTypeForFile(file);

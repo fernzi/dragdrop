@@ -4,7 +4,6 @@
  * along with this file, see <https://www.gnu.org/licenses/>. */
 
 #include "application.hh"
-#include "window.hh"
 #include <QFileInfo>
 
 namespace DragDrop {
@@ -16,14 +15,11 @@ Application::Application(int& argc, char** argv)
 
 auto Application::exec() -> int
 {
-	QList<QFileInfo> files;
-
 	for (const auto& name : arguments().mid(1)) {
-		files << QFileInfo(name);
+		mWindow.addFile(QFileInfo(name));
 	}
 
-	Window win(files);
-	win.show();
+	mWindow.show();
 	return QApplication::exec();
 }
 

@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include <QListWidget>
 #include <QFileInfo>
+#include <QListWidget>
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 #define DAREA_REF &
@@ -21,15 +21,16 @@ class DragArea : public QListWidget
 	Q_OBJECT
 
 public:
-	DragArea(const QList<QFileInfo>& files, QWidget* parent = nullptr);
-	QSize sizeHint() const override;
+	DragArea(QWidget* parent = nullptr);
+	auto sizeHint() const -> QSize override;
 
 	void addFile(const QFileInfo& file);
 
 protected:
 	void startDrag(Qt::DropActions actions) override;
-	QStringList mimeTypes() const override;
-	QMimeData* mimeData(const QList<QListWidgetItem*>DAREA_REF items) const override;
+	auto mimeTypes() const -> QStringList override;
+	auto mimeData(const QList<QListWidgetItem*> DAREA_REF items) const
+		-> QMimeData* override;
 
 signals:
 	void filesSent();

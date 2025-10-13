@@ -7,12 +7,12 @@
 
 namespace DragDrop {
 
-Window::Window(const QList<QFileInfo>& files, QWidget* parent)
+Window::Window(QWidget* parent)
 	: QDialog(parent)
 	, mOutput(this)
 	, mWriter(&mOutput)
 	, mLayout(this)
-	, mDrag(files, this)
+	, mDrag(this)
 	, mDrop(this)
 {
 	setWindowTitle(tr("Drag and Drop"));
@@ -26,10 +26,12 @@ Window::Window(const QList<QFileInfo>& files, QWidget* parent)
 
 	mLayout.addWidget(&mDrop);
 	mLayout.addWidget(&mDrag);
+}
 
-	if (mDrag.count()) {
-		mLayout.setCurrentWidget(&mDrag);
-	}
+void Window::addFile(QFileInfo const& file)
+{
+	mDrag.addFile(file);
+	mLayout.setCurrentWidget(&mDrag);
 }
 
 void Window::onFilesSent()

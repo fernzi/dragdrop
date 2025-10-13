@@ -20,7 +20,9 @@ class Window : public QDialog
 	Q_OBJECT
 
 public:
-	Window(const QList<QFileInfo>& files, QWidget* parent = nullptr);
+	Window(QWidget* parent = nullptr);
+
+	void addFile(QFileInfo const& file);
 
 public slots:
 	void onFilesRecv(const QList<QUrl>& files);
