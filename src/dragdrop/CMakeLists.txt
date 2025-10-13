@@ -10,6 +10,7 @@ endif()
 target_link_libraries(${BIN_NAME}
 PRIVATE
 	Qt${QT_VERSION_MAJOR}::Core
+	common
 )
 target_compile_definitions(${BIN_NAME}
 PRIVATE

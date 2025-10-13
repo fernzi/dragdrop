@@ -15,6 +15,7 @@ Application::Application(int& argc, char** argv)
 	: QCoreApplication(argc, argv)
 	, mProg(this)
 	, mOutput(stdout, QIODevice::WriteOnly)
+	, mParser(&mProg, this)
 {
 	setApplicationName(QStringLiteral(PROGRAM_NAME));
 	setApplicationVersion(QStringLiteral(PROGRAM_VERSION));
@@ -55,8 +56,10 @@ auto Application::exec() -> int
 	}
 	mProg.setArguments(files);
 
-	connect(&mProg, &QProcess::readyReadStandardOutput, this,
-		&Application::dialogOutput);
+	connect(&mParser, &FileParser::parsedURL, this,
+		&Application::parserOutput);
+	connect(&mParser, &FileParser::finished, this,
+		&Application::parserFinished);
 	connect(&mProg,
 		QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
 		this, &Application::dialogFinished);
@@ -66,49 +69,17 @@ auto Application::exec() -> int
 	return QCoreApplication::exec();
 }
 
-static auto decodeString(QCborStreamReader& reader)
+void Application::parserOutput(QUrl url)
 {
-	QString str;
-	QCborStreamReader::StringResult<QString> r;
-	while ((r = reader.readString()).status == QCborStreamReader::Ok) {
-		str += r.data;
-	}
-	if (r.status == QCborStreamReader::Error) {
-		str.clear();
-	}
-	return str;
-}
-
-static void handleStream(
-	QCborStreamReader& reader, QTextStream& out, bool asUri, char term)
-{
-	QUrl uri;
-	switch (reader.type()) {
-	case QCborStreamReader::ByteArray:
-	case QCborStreamReader::String:
-		uri = decodeString(reader);
-		out << (asUri ? uri.url() : uri.path()) << term;
-		break;
-	case QCborStreamReader::Array:
-		reader.enterContainer();
-		while (not reader.lastError() and reader.hasNext()) {
-			handleStream(reader, out, asUri, term);
-		}
-		if (not reader.lastError()) {
-			reader.leaveContainer();
-		}
-		break;
-	default:
-		reader.next();
-	}
-}
-
-void Application::dialogOutput()
-{
-	mReader.setDevice(&mProg);
-	handleStream(mReader, mOutput, args.isSet(QStringLiteral("uris")),
-		args.isSet(QStringLiteral("null")) ? '\0' : '\n');
+	auto u = args.isSet(QStringLiteral("uris"));
+	auto e = args.isSet(QStringLiteral("null"));
+	mOutput << (u ? url.url() : url.path());
+	mOutput << (e ? '\0' : '\n');
 	mOutput.flush();
+}
+
+void Application::parserFinished()
+{
 	if (args.isSet(QStringLiteral("once"))) {
 		QTimer::singleShot(300, &mProg, &QProcess::terminate);
 	}

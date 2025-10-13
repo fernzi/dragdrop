@@ -5,10 +5,11 @@
 
 #pragma once
 
-#include <QCborStreamReader>
 #include <QCommandLineParser>
 #include <QCoreApplication>
 #include <QProcess>
+#include <QUrl>
+#include <fileparser.hh>
 
 namespace DragDrop {
 
@@ -21,13 +22,14 @@ public:
 	auto exec() -> int;
 
 private:
-	QCborStreamReader mReader;
 	QCommandLineParser args;
 	QProcess mProg;
 	QTextStream mOutput;
+	FileParser mParser;
 
 private slots:
-	void dialogOutput();
+	void parserOutput(QUrl url);
+	void parserFinished();
 	void dialogFinished(int code, QProcess::ExitStatus exitStatus);
 };
 
