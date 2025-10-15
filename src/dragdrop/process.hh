@@ -16,6 +16,11 @@ class Process : public QProcess
 public:
 	Process(QObject* parent = nullptr);
 	~Process() override;
+
+protected:
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+	void setupChildProcess() override;
+#endif
 };
 
 } // namespace DragDrop

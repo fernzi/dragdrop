@@ -4,14 +4,17 @@
  * along with this file, see <https://www.gnu.org/licenses/>. */
 
 #include "process.hh"
+#include <unistd.h>
 
 namespace DragDrop {
 
 Process::Process(QObject* parent)
 	: QProcess(parent)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 	setUnixProcessParameters(UnixProcessFlag::CloseFileDescriptors
 		| UnixProcessFlag::CreateNewSession);
+#endif
 }
 
 Process::~Process()
@@ -24,5 +27,12 @@ Process::~Process()
 		setProcessState(NotRunning);
 	}
 }
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+void Process::setupChildProcess()
+{
+	::setsid();
+}
+#endif
 
 } // namespace DragDrop
