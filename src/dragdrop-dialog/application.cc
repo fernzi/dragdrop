@@ -11,15 +11,21 @@ namespace DragDrop {
 Application::Application(int& argc, char** argv)
 	: QApplication(argc, argv)
 {
+	mArgs.addOptions({
+		{{"o", "once"}, ""},
+	});
+	mArgs.process(*this);
 }
 
 auto Application::exec() -> int
 {
-	for (const auto& name : arguments().mid(1)) {
+	for (auto const& name : mArgs.positionalArguments()) {
 		mWindow.addFile(QFileInfo(name));
 	}
 
+	mWindow.setOnce(mArgs.isSet(QStringLiteral("once")));
 	mWindow.show();
+
 	return QApplication::exec();
 }
 

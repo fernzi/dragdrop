@@ -23,12 +23,16 @@ public:
 	Window(QWidget* parent = nullptr);
 
 	void addFile(QFileInfo const& file);
+	void setOnce(bool once);
 
 public slots:
 	void onFilesRecv(const QList<QUrl>& files);
 	void onFilesSent();
 
 private:
+	void waitAndExit();
+
+	bool mOnce;
 	QFile mOutput;
 	QCborStreamWriter mWriter;
 	QStackedLayout mLayout;

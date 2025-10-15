@@ -4,6 +4,8 @@
  * along with this file, see <https://www.gnu.org/licenses/>. */
 
 #include "window.hh"
+#include <QApplication>
+#include <QTimer>
 
 namespace DragDrop {
 
@@ -34,10 +36,16 @@ void Window::addFile(QFileInfo const& file)
 	mLayout.setCurrentWidget(&mDrag);
 }
 
+void Window::setOnce(bool once)
+{
+	mOnce = once;
+}
+
 void Window::onFilesSent()
 {
 	mWriter.append(QCborSimpleType::Null);
 	mOutput.flush();
+	waitAndExit();
 }
 
 void Window::onFilesRecv(const QList<QUrl>& files)
@@ -48,6 +56,15 @@ void Window::onFilesRecv(const QList<QUrl>& files)
 	}
 	mWriter.endArray();
 	mOutput.flush();
+	waitAndExit();
+}
+
+void Window::waitAndExit()
+{
+	if (mOnce) {
+		hide();
+		QTimer::singleShot(5000, this, [] { QApplication::exit(); });
+	}
 }
 
 }; // namespace DragDrop

@@ -6,7 +6,6 @@
 #include "application.hh"
 #include <QFileInfo>
 #include <QProcess>
-#include <QTimer>
 #include <QUrl>
 
 namespace DragDrop {
@@ -54,6 +53,9 @@ auto Application::exec() -> int
 			files << name;
 		}
 	}
+	if (args.isSet(QStringLiteral("once"))) {
+		files << "-o";
+	}
 	mProg.setArguments(files);
 
 	connect(&mParser, &FileParser::parsedURL, this,
@@ -81,7 +83,7 @@ void Application::parserOutput(QUrl url)
 void Application::parserFinished()
 {
 	if (args.isSet(QStringLiteral("once"))) {
-		QTimer::singleShot(300, &mProg, &QProcess::terminate);
+		exit();
 	}
 }
 

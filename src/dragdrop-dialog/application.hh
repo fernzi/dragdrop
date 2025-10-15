@@ -7,6 +7,7 @@
 
 #include "window.hh"
 #include <QApplication>
+#include <QCommandLineParser>
 
 namespace DragDrop {
 
@@ -19,6 +20,7 @@ public:
 	auto exec() -> int;
 
 private:
+	QCommandLineParser mArgs;
 	Window mWindow;
 };
 

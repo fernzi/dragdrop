@@ -5,9 +5,9 @@
 
 #pragma once
 
+#include "process.hh"
 #include <QCommandLineParser>
 #include <QCoreApplication>
-#include <QProcess>
 #include <QUrl>
 #include <fileparser.hh>
 
@@ -23,7 +23,7 @@ public:
 
 private:
 	QCommandLineParser args;
-	QProcess mProg;
+	Process mProg;
 	QTextStream mOutput;
 	FileParser mParser;
 
