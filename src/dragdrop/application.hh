@@ -30,7 +30,6 @@ private:
 private slots:
 	void parserOutput(QUrl url);
 	void parserFinished();
-	void dialogFinished(int code, QProcess::ExitStatus exitStatus);
 };
 
 }; // namespace DragDrop

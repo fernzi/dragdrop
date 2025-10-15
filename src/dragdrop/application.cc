@@ -64,7 +64,7 @@ auto Application::exec() -> int
 		&Application::parserFinished);
 	connect(&mProg,
 		QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-		this, &Application::dialogFinished);
+		this, &Application::exit);
 
 	mProg.start();
 
@@ -85,11 +85,6 @@ void Application::parserFinished()
 	if (args.isSet(QStringLiteral("once"))) {
 		exit();
 	}
-}
-
-void Application::dialogFinished(int code, QProcess::ExitStatus status)
-{
-	exit();
 }
 
 }; // namespace DragDrop
