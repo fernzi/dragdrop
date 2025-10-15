@@ -63,7 +63,7 @@ void Window::waitAndExit()
 {
 	if (mOnce) {
 		hide();
-		QTimer::singleShot(5000, this, [] { QApplication::exit(); });
+		QTimer::singleShot(30000, this, [] { QApplication::exit(); });
 	}
 }
 
