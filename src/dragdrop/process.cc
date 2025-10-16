@@ -6,14 +6,20 @@
 #include "process.hh"
 #include <unistd.h>
 
+static void modifyProcess()
+{
+	::setsid();
+	::close_range(STDERR_FILENO + 1, std::numeric_limits<int>::max(),
+		CLOSE_RANGE_CLOEXEC);
+}
+
 namespace DragDrop {
 
 Process::Process(QObject* parent)
 	: QProcess(parent)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-	setUnixProcessParameters(UnixProcessFlag::CloseFileDescriptors
-		| UnixProcessFlag::CreateNewSession);
+	setChildProcessModifier(modifyProcess);
 #endif
 }
 
@@ -31,7 +37,7 @@ Process::~Process()
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 void Process::setupChildProcess()
 {
-	::setsid();
+	modifyProcess();
 }
 #endif
 
