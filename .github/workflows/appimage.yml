@@ -1,4 +1,4 @@
-name: AppImage Build
+name: AppImage Continuous
 
 on:
   push:
@@ -22,6 +22,9 @@ on:
       - '.editorconfig'
       - '.gitignore'
 
+env:
+  BUILD_TYPE: RelWithDebInfo
+
 jobs:
   build:
     name: Linux x86_64 (Continuous)
@@ -29,23 +32,58 @@ jobs:
     container: debian:oldstable-slim
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: Install dependencies
-        run: |
+      - name: Install Dependencies
+        run:  |
           apt-get update
           apt-get install -y --no-install-recommends \
             build-essential cmake qt6-base-dev ninja-build \
-            ca-certificates curl file
+            ca-certificates wget file
+
+      - name: Install LinuxDeploy
+        id:   linuxdeploy
+        uses: miurahr/install-linuxdeploy-action@v1
+        with:
+          plugins: appimage qt
+
+      - name: Set Up Environment
+        run:  |
+          exec >> ${GITHUB_ENV}
+          echo REPO_ID=${GITHUB_REPOSITORY} | tr / \|
+          case ${GITHUB_REF} in
+            refs/tags/v*)
+              echo VERSION=${GITHUB_REF##*/v}
+              echo REPO_CH=latest
+              ;;
+            *)
+              echo REPO_CH=continuous
+              ;;
+          esac
+          printf 'ARCH=%s\n' $(uname -m)
+
+      - name: Configure
+        run:  >
+          cmake -B build -G Ninja
+          -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          -DCMAKE_INSTALL_PREFIX=/usr
 
       - name: Build
-        run:  etc/ci/build
+        run:  cmake --build build --config ${{env.BUILD_TYPE}}
+
+      - name: Install
+        env:
+          DESTDIR: appdir
+        run:  cmake --install build --config ${{env.BUILD_TYPE}}
 
       - name: Package
-        id:   package
         env:
           APPIMAGE_EXTRACT_AND_RUN: 1
-        run:  etc/ci/package
+          DISABLE_COPYRIGHT_FILES_DEPLOYMENT: 1
+          LDAI_UPDATE_INFORMATION: gh-releases-zsync|${{env.REPO_ID}}|${{env.REPO_CH}}|DragDrop-*${{env.ARCH}}.AppImage.zsync
+        run:  >
+          ${{steps.linuxdeploy.outputs.linuxdeploy}}
+          --appdir appdir --plugin qt --output appimage
 
       - uses: actions/upload-artifact@v4
         with:
