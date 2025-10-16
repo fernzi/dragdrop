@@ -49,6 +49,7 @@ jobs:
         run:  >
           cmake -B build -G Ninja
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          -DCMAKE_INSTALL_LIBEXECDIR=bin
           -DCMAKE_INSTALL_PREFIX=/usr
 
       - name: Build
@@ -63,7 +64,7 @@ jobs:
         env:
           APPIMAGE_EXTRACT_AND_RUN: 1
           DISABLE_COPYRIGHT_FILES_DEPLOYMENT: 1
-          LDAI_UPDATE_INFORMATION: gh-releases-zsync|${{env.REPO_ID}}|${{env.REPO_CH}}|DragDrop-*${{env.ARCH}}.AppImage.zsync
+          UPDATE_INFORMATION: gh-releases-zsync|${{env.REPO_ID}}|${{env.REPO_CH}}|DragDrop-*${{env.ARCH}}.AppImage.zsync
         run:  >
           ${{steps.linuxdeploy.outputs.linuxdeploy}}
           --appdir appdir --plugin qt --output appimage
