@@ -5,9 +5,11 @@ qt_url='https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/c
 if command -v curl >/dev/null 2>&1; then
 	curl -sLOC- "$ld_url"
 	curl -sLOC- "$qt_url"
-else
+elif command -v wget >/dev/null 2>&1; then
 	wget -c -nv "$ld_url"
 	wget -c -nv "$qt_url"
+else
+	exit 1
 fi
 chmod +x "${ld_url##*/}" "${qt_url##*/}"
 
