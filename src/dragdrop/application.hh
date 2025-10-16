@@ -6,6 +6,7 @@
 #pragma once
 
 #include "process.hh"
+#include "signalhandler.hh"
 #include <QCommandLineParser>
 #include <QCoreApplication>
 #include <QUrl>
@@ -26,6 +27,7 @@ private:
 	Process mProg;
 	QTextStream mOutput;
 	FileParser mParser;
+	SignalHandler mSignals;
 
 private slots:
 	void parserOutput(QUrl url);

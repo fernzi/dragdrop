@@ -7,6 +7,7 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QUrl>
+#include <csignal>
 
 namespace DragDrop {
 
@@ -15,9 +16,12 @@ Application::Application(int& argc, char** argv)
 	, mProg(this)
 	, mOutput(stdout, QIODevice::WriteOnly)
 	, mParser(&mProg, this)
+	, mSignals(this)
 {
 	setApplicationName(QStringLiteral(PROGRAM_NAME));
 	setApplicationVersion(QStringLiteral(PROGRAM_VERSION));
+
+	mSignals.connectSignals(SIGINT, SIGTERM, SIGHUP);
 
 	args.setApplicationDescription(
 		tr("Drag-and-drop file source for the terminal"));
@@ -65,6 +69,8 @@ auto Application::exec() -> int
 	connect(&mProg,
 		QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
 		this, &Application::exit);
+	connect(&mSignals, &SignalHandler::activated, &mProg,
+		&QProcess::terminate);
 
 	mProg.start();
 
