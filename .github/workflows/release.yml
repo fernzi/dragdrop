@@ -18,7 +18,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y --no-install-recommends \
-            build-essential cmake qtbase5-dev ninja-build \
+            build-essential cmake qt6-base-dev ninja-build \
             ca-certificates curl file
 
       - name: Determine version
