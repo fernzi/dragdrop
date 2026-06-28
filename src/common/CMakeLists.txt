@@ -1,15 +1,11 @@
 cmake_path(GET CMAKE_CURRENT_LIST_DIR FILENAME TARGET_NAME)
 file(GLOB SRC CONFIGURE_DEPENDS "*.cc" "*.hh")
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-	qt_add_library(${TARGET_NAME} STATIC ${SRC})
-else()
-	add_library(${TARGET_NAME} ${SRC})
-endif()
+qt_add_library(${TARGET_NAME} STATIC ${SRC})
 
 target_link_libraries(${TARGET_NAME}
-PUBLIC
-	Qt${QT_VERSION_MAJOR}::Core
+  PUBLIC
+    Qt::Core
 )
 target_include_directories(${TARGET_NAME}
 PUBLIC

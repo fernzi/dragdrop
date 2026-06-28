@@ -1,7 +1,7 @@
-/* Copyright © 2022-2023 Fern Zapata
- * This program is subject to the terms of the GNU GPL, version 3
- * or, at your option, any later version. If a copy of it was not
- * included with this file, see https://www.gnu.org/licenses/. */
+/* Copyright © 2022-2026 Fern Zapata
+ * This file is under the terms of the GNU GPL version 3, or (at your
+ * option) any later version. If you didn't receive a copy of the GPL
+ * along with this file, see <https://www.gnu.org/licenses/>. */
 
 #include "dragarea.hh"
 #include <QDrag>
@@ -27,8 +27,10 @@ DragArea::DragArea(QWidget* parent)
 auto DragArea::sizeHint() const -> QSize
 {
 	auto screen_h = screen()->size().height();
-	return QSize(sizeHintForColumn(0),
-		qMin(sizeHintForRow(0) * count(), screen_h / 3));
+	return {
+		sizeHintForColumn(0),
+		qMin(sizeHintForRow(0) * count(), screen_h / 3),
+	};
 }
 
 auto DragArea::mimeTypes() const -> QStringList
@@ -36,14 +38,14 @@ auto DragArea::mimeTypes() const -> QStringList
 	return QStringList(QStringLiteral("text/uri-list"));
 }
 
-auto DragArea::mimeData(
-	const QList<QListWidgetItem*> DAREA_REF items) const -> QMimeData*
+auto DragArea::mimeData(const QList<QListWidgetItem*>& items) const
+	-> QMimeData*
 {
-	auto data = new QMimeData;
 	QList<QUrl> urls;
 	for (auto const& item : items) {
 		urls << item->data(Qt::UserRole).toUrl();
 	}
+	auto data = new QMimeData;
 	data->setUrls(urls);
 	return data;
 }
