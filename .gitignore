@@ -27,7 +27,7 @@
 !/doc/**/*.[1-8]
 !/doc/**/*.md
 !/doc/**/*.png
-!/doc/examples/*
+!/doc/**/*.sh
 !/etc/xdg/*.desktop
 !/etc/xdg/*.svg
 !/src/**/*.cc
