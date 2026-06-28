@@ -1,7 +1,6 @@
 *
 !*/
 
-# Project
 !/.clang-format
 !/.clang-tidy
 !/.gitignore
@@ -9,32 +8,28 @@
 !/LICENSE
 !/README*.md
 
-!/doc/**/*.md
-!/doc/**/*.png
-!/doc/**/CMakeLists.txt
-!/doc/examples/*
-
-!/etc/**/CMakeLists.txt
-!/etc/xdg/*.desktop
-!/etc/xdg/*.svg
-
 !/.github/**/*.yml
-!/etc/ci/*
+!/.gitlab-ci.yml
 
-# Guix
 !/.guix-authorizations
 !/.guix-channel
 !/.guix/**/*.scm
 !/etc/guix/**/*.scm
 !/guix.scm
 
-# Code
 !/CMakeLists.txt
 !/CMakePresets.json
 !/cmake/**/*.cmake
+!/doc/**/CMakeLists.txt
+!/etc/**/CMakeLists.txt
+!/src/**/CMakeLists.txt
+
+!/doc/**/*.[1-8]
+!/doc/**/*.md
+!/doc/**/*.png
+!/doc/examples/*
+!/etc/xdg/*.desktop
+!/etc/xdg/*.svg
 !/src/**/*.cc
 !/src/**/*.hh
-!/src/**/CMakeLists.txt
-!/test/**/*.cc
-!/test/**/*.hh
-!/test/**/CMakeLists.txt
+!/src/**/*.in

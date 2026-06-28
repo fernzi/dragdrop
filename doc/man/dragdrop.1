@@ -1,0 +1,54 @@
+.Dd $Mdocdate: June 28 2026 $
+.Dt DRAGDROP 1
+.Os
+.\"
+.Sh NAME
+.Nm dragdrop
+.Nd file drag-and-drop source
+.\"
+.Sh SYNOPSIS
+.Nm
+.Op Fl 0houv
+.Op Ar
+.\"
+.Sh DESCRIPTION
+The
+.Nm
+utility acts as a source or sink for dragging and dropping files
+into programs running in a terminal emulator.
+.Pp
+When started with file names as its arguments,
+it will display those files in a window
+from which they can be dragged into a graphical application,
+like a file manager or web browser.
+If started with no files specified,
+the window will act as a sink in which files can be dropped
+and their paths will be printed to the standard output.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl 0 , -null
+Separate printed paths with a null character.
+.It Fl o , -once
+Exit after a single drag or drop.
+.It Fl u , -uris
+Print URIs instead of file paths on drop.
+.It Fl -dirs-first
+List directories before files on the source dialog.
+.It Fl h , -help
+Show help information, then exit.
+.It Fl v , -version
+Show version information, then exit.
+.\"
+.Sh AUTHORS
+Written by Fern Zapata. Current sources can be found at:
+.D1 Lk https://github.com/fernzi/dragdrop
+.\"
+.Sh COPYRIGHT
+Copyright © 2026 Fern Zapata.
+.Pp
+License GPLv3+: GNU GPL version 3 or later:
+.D1 Lk https://gnu.org/licenses/gpl.html
+.Pp
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
