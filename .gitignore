@@ -14,7 +14,6 @@
 !/.guix-authorizations
 !/.guix-channel
 !/.guix/**/*.scm
-!/etc/guix/**/*.scm
 !/guix.scm
 
 !/CMakeLists.txt

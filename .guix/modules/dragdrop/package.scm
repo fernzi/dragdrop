@@ -1,29 +1,25 @@
-;;; Copyright © 2024 Fern Zapata
-;;; This file is under the terms of the GNU GPL ver. 3.
-;;; If a copy of the GNU GPL was not included with this
-;;; file, see <https://www.gnu.org/licenses/>.
+;;; Copyright © 2024-2026 Fern Zapata
+;;; This file is under the terms of the GNU GPL version 3, or (at your
+;;; option) any later version. If you didn't receive a copy of the GPL
+;;; along with this file, see <https://www.gnu.org/licenses/>. */
 
 (define-module (dragdrop package)
-  #:use-module (git describe)
-  #:use-module (gnu packages golang)
-  #:use-module (gnu packages qt)
   #:use-module (guix)
-  #:use-module (guix build-system cmake)
-  #:use-module (guix git)
   #:use-module (guix git-download)
-  #:use-module ((guix licenses) #:prefix license:))
+  #:use-module (guix build-system cmake)
+  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (gnu packages build-tools)
+  #:use-module (gnu packages qt))
 
 (define vcs-file?
   (or (git-predicate
        (string-append (current-source-directory) "/../../.."))
       (const #t)))
 
-(define %vcs-version "9999-git")
-
 (define-public dragdrop
   (package
     (name "dragdrop")
-    (version %vcs-version)
+    (version "9999-git")
     (source
      (local-file
       "../../.." (git-file-name name version)
@@ -31,11 +27,12 @@
       #:select? vcs-file?))
     (build-system cmake-build-system)
     (arguments
-     (list #:tests? #f))
+     (list #:configure-flags #~(list "-GNinja")
+           #:tests? #f))
     (inputs
      (list qtbase))
     (native-inputs
-     (list go-github-com-go-md2man))
+     (list ninja))
     (synopsis "File drag-and-drop source")
     (description
      "The dragdrop utility acts as a source or sink for
@@ -43,12 +40,5 @@ dragging and dropping files into programs running in a terminal
 emulator.")
     (home-page "https://github.com/fernzi/dragdrop")
     (license license:gpl3+)))
-
-(define-public dragdrop-qt5
-  (package
-    (inherit dragdrop)
-    (name "dragdrop-qt5")
-    (inputs (modify-inputs (package-inputs dragdrop)
-              (replace "qtbase" qtbase-5)))))
 
 dragdrop

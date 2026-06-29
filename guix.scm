@@ -1,1 +1,1 @@
-etc/guix/dragdrop/package.scm
+.guix/modules/dragdrop/package.scm
