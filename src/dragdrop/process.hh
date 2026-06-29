@@ -1,4 +1,4 @@
-/* Copyright © 2025 Fern Zapata
+/* Copyright © 2025-2026 Fern Zapata
  * This file is under the terms of the GNU GPL version 3, or (at your
  * option) any later version. If you didn't receive a copy of the GPL
  * along with this file, see <https://www.gnu.org/licenses/>. */
@@ -16,11 +16,6 @@ class Process : public QProcess
 public:
 	Process(QObject* parent = nullptr);
 	~Process() override;
-
-protected:
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-	void setupChildProcess() override;
-#endif
 };
 
 } // namespace DragDrop
