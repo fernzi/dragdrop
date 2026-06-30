@@ -5,6 +5,7 @@ qt_add_executable(${BIN_NAME} ${SRC})
 
 target_link_libraries(${BIN_NAME}
   PRIVATE
+    Qt::Network
     Qt::Widgets
 )
 target_compile_definitions(${BIN_NAME}

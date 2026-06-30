@@ -6,6 +6,7 @@ qt_add_executable(${BIN_NAME} ${SRC})
 target_link_libraries(${BIN_NAME}
   PRIVATE
     Qt::Core
+    Qt::Network
     common
 )
 target_compile_definitions(${BIN_NAME}

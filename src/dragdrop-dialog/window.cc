@@ -1,6 +1,6 @@
-/* Copyright © 2022-2025 Fern Zapata
- * This file is under the terms of the GNU GPL ver. 3, or (at your
- * option) any later version. If a copy of the GPL wasn't included
+/* Copyright © 2022-2026 Fern Zapata
+ * This file is under the terms of the GNU GPL version 3, or (at your
+ * option) any later version. If you didn't receive a copy of the GPL
  * along with this file, see <https://www.gnu.org/licenses/>. */
 
 #include "window.hh"
@@ -19,9 +19,9 @@ Window::Window(QWidget* parent)
 {
 	setWindowTitle(tr("Drag and Drop"));
 
-	if (not mOutput.open(stdout, QIODevice::WriteOnly)) {
-		close();
-	}
+  auto name = qEnvironmentVariable("DRAGDROP_SOCKET");
+  mOutput.connectToServer(name);
+  qDebug() << "client socket:" << mOutput.fullServerName();
 
 	connect(&mDrop, &DropArea::filesRecv, this, &Window::onFilesRecv);
 	connect(&mDrag, &DragArea::filesSent, this, &Window::onFilesSent);

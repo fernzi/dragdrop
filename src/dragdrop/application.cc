@@ -1,27 +1,34 @@
-/* Copyright © 2024-2025 Fern Zapata
- * This file is under the terms of the GNU GPL ver. 3, or (at your
- * option) any later version. If a copy of the GPL wasn't included
+/* Copyright © 2024-2026 Fern Zapata
+ * This file is under the terms of the GNU GPL version 3, or (at your
+ * option) any later version. If you didn't receive a copy of the GPL
  * along with this file, see <https://www.gnu.org/licenses/>. */
 
 #include "application.hh"
+#include "server.hh"
 #include <QFileInfo>
 #include <QProcess>
-#include <QUrl>
-#include <csignal>
+
+namespace {
+
+auto const SOCKET_ENV = QStringLiteral("DRAGDROP_SOCKET");
+
+auto makeServerName() -> QString
+{
+  auto pid = QCoreApplication::applicationPid();
+  return QStringLiteral(PROGRAM_NAME "-%1").arg(pid);
+}
+
+} // namespace
 
 namespace DragDrop {
 
 Application::Application(int& argc, char** argv)
-	: QCoreApplication(argc, argv)
-	, mProg(this)
-	, mOutput(stdout, QIODevice::WriteOnly)
-	, mParser(&mProg, this)
-	, mSignals(this)
+  : QCoreApplication(argc, argv)
+  , mServerName(makeServerName())
+  , mServer(new Server(mServerName, this))
 {
 	setApplicationName(QStringLiteral(PROGRAM_NAME));
 	setApplicationVersion(QStringLiteral(PROGRAM_VERSION));
-
-	mSignals.connectSignals(SIGINT, SIGTERM, SIGHUP);
 
 	args.setApplicationDescription(
 		tr("Drag-and-drop file source for the terminal"));
@@ -40,13 +47,13 @@ Application::Application(int& argc, char** argv)
 		"files", tr("Files to display"), tr("[files...]"));
 
 	args.process(*this);
+
+  connect(mServer, &Server::receivedURLs, this, &Application::onReceivedURLs);
+  connect(mServer, &Server::disconnected, this, [] { exit(); });
 }
 
 auto Application::exec() -> int
 {
-	mProg.setProgram(applicationDirPath()
-		+ "/../" LIBEXEC_DIR "/" PROGRAM_NAME "-dialog");
-
 	int dirPos = 0;
 	QStringList files;
 	for (const auto& name : args.positionalArguments()) {
@@ -60,37 +67,33 @@ auto Application::exec() -> int
 	if (args.isSet(QStringLiteral("once"))) {
 		files << "-o";
 	}
-	mProg.setArguments(files);
 
-	connect(&mParser, &FileParser::parsedURL, this,
-		&Application::parserOutput);
-	connect(&mParser, &FileParser::finished, this,
-		&Application::parserFinished);
-	connect(&mProg,
-		QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-		this, &Application::exit);
-	connect(&mSignals, &SignalHandler::activated, &mProg,
-		&QProcess::terminate);
+  auto dialog = new QProcess(this);
+  dialog->setProgram(
+    applicationDirPath() + "/../" LIBEXEC_DIR "/" PROGRAM_NAME "-dialog");
+  dialog->setArguments(files);
 
-	mProg.start();
+  auto env = QProcessEnvironment::systemEnvironment();
+  env.insert(SOCKET_ENV, mServerName);
+  dialog->setProcessEnvironment(env);
 
-	return QCoreApplication::exec();
+  dialog->startDetached();
+
+  return QCoreApplication::exec();
 }
 
-void Application::parserOutput(QUrl url)
+void Application::onReceivedURLs(QList<QUrl> const& urls)
 {
-	auto u = args.isSet(QStringLiteral("uris"));
-	auto e = args.isSet(QStringLiteral("null"));
-	mOutput << (u ? url.url() : url.path());
-	mOutput << (e ? '\0' : '\n');
-	mOutput.flush();
-}
+  auto puri = args.isSet(QStringLiteral("uris"));
+  auto pnul = args.isSet(QStringLiteral("null"));
+  auto outs = QTextStream(stdout, QIODevice::WriteOnly);
+  for (const auto& url : urls) {
+    outs << (puri ? url.url() : url.path()) << (pnul ? '\0' : '\n');
+  }
 
-void Application::parserFinished()
-{
-	if (args.isSet(QStringLiteral("once"))) {
-		exit();
-	}
+  if (args.isSet(QStringLiteral("once"))) {
+    exit();
+  }
 }
 
 }; // namespace DragDrop
