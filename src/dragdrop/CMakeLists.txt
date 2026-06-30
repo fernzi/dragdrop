@@ -9,12 +9,6 @@ target_link_libraries(${BIN_NAME}
     Qt::Network
     common
 )
-target_compile_definitions(${BIN_NAME}
-PRIVATE
-	LIBEXEC_DIR="${CMAKE_INSTALL_LIBEXECDIR}"
-	PROGRAM_NAME="${BIN_NAME}"
-	PROGRAM_VERSION="${PROJECT_VERSION}"
-)
 target_compile_options(${BIN_NAME}
 PRIVATE
 	$<$<C_COMPILER_ID:MSVC>:/W3>

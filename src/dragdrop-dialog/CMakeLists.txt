@@ -8,11 +8,6 @@ target_link_libraries(${BIN_NAME}
     Qt::Network
     Qt::Widgets
 )
-target_compile_definitions(${BIN_NAME}
-PRIVATE
-	DRAGDROP_NAME="${BIN_NAME}"
-	DRAGDROP_VERSION="${PROJECT_VERSION}"
-)
 target_compile_options(${BIN_NAME}
 PRIVATE
 	$<$<C_COMPILER_ID:MSVC>:/W3>

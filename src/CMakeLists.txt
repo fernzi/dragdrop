@@ -1,4 +1,10 @@
 set(TARGET_NAME "common")
+
+set(PROGRAM_NAME ${PROJECT_NAME})
+set(PROGRAM_VERSION ${PROJECT_VERSION})
+set(LIBEXEC_DIR ${CMAKE_INSTALL_LIBEXECDIR})
+configure_file(config.hh.in config.hh @ONLY)
+
 file(GLOB SRC CONFIGURE_DEPENDS "*.cc" "*.hh")
 
 qt_add_library(${TARGET_NAME} STATIC ${SRC})
@@ -10,6 +16,7 @@ target_link_libraries(${TARGET_NAME}
 target_include_directories(${TARGET_NAME}
 PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
 )
 target_compile_options(${TARGET_NAME}
 PRIVATE

@@ -5,6 +5,7 @@
 
 #include "application.hh"
 #include "server.hh"
+#include "config.hh"
 #include <QFileInfo>
 #include <QProcess>
 
@@ -15,7 +16,7 @@ auto const SOCKET_ENV = QStringLiteral("DRAGDROP_SOCKET");
 auto makeServerName() -> QString
 {
   auto pid = QCoreApplication::applicationPid();
-  return QStringLiteral(PROGRAM_NAME "-%1").arg(pid);
+  return QStringLiteral("%1-%2").arg(DragDrop::PROGRAM_NAME).arg(pid);
 }
 
 } // namespace
@@ -27,8 +28,8 @@ Application::Application(int& argc, char** argv)
   , mServerName(makeServerName())
   , mServer(new Server(mServerName, this))
 {
-	setApplicationName(QStringLiteral(PROGRAM_NAME));
-	setApplicationVersion(QStringLiteral(PROGRAM_VERSION));
+  setApplicationName(PROGRAM_NAME);
+  setApplicationVersion(PROGRAM_VERSION);
 
 	args.setApplicationDescription(
 		tr("Drag-and-drop file source for the terminal"));
@@ -69,8 +70,10 @@ auto Application::exec() -> int
 	}
 
   auto dialog = new QProcess(this);
-  dialog->setProgram(
-    applicationDirPath() + "/../" LIBEXEC_DIR "/" PROGRAM_NAME "-dialog");
+  auto dpath = // clang-format sucks
+    QStringLiteral("%1/../%2/%3-dialog")
+      .arg(applicationDirPath(), LIBEXEC_DIR, PROGRAM_NAME);
+  dialog->setProgram(dpath);
   dialog->setArguments(files);
 
   auto env = QProcessEnvironment::systemEnvironment();
