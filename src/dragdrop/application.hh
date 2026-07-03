@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <QCommandLineParser>
+#include "options.hh"
 #include <QCoreApplication>
 #include <QUrl>
 
@@ -22,12 +22,12 @@ public:
 	auto exec() -> int;
 
 private:
-	QCommandLineParser args;
+  Options mOpts;
   QString mServerName;
   Server* mServer = nullptr;
 
 private slots:
-  void onReceivedURLs(QList<QUrl> const& urls);
+  void onReceivedURLs(QList<QUrl> const& urls) const;
 };
 
 }; // namespace DragDrop

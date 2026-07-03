@@ -4,8 +4,8 @@
  * along with this file, see <https://www.gnu.org/licenses/>. */
 
 #include "application.hh"
-#include "server.hh"
 #include "config.hh"
+#include "server.hh"
 #include <QFileInfo>
 #include <QProcess>
 
@@ -25,29 +25,12 @@ namespace DragDrop {
 
 Application::Application(int& argc, char** argv)
   : QCoreApplication(argc, argv)
+  , mOpts(*this)
   , mServerName(makeServerName())
   , mServer(new Server(mServerName, this))
 {
   setApplicationName(PROGRAM_NAME);
   setApplicationVersion(PROGRAM_VERSION);
-
-	args.setApplicationDescription(
-		tr("Drag-and-drop file source for the terminal"));
-	args.addHelpOption();
-	args.addVersionOption();
-
-	args.addOptions({
-		{{"o", "once"}, tr("Exit after a single drag or drop.")},
-		{{"u", "uris"}, tr("Print URIs instead of paths on drop.")},
-		{{"0", "null"},
-			tr("Separate printed paths with a null character.")},
-		{"dirs-first",
-			tr("List directories before files on the source dialog")},
-	});
-	args.addPositionalArgument(
-		"files", tr("Files to display"), tr("[files...]"));
-
-	args.process(*this);
 
   connect(mServer, &Server::receivedURLs, this, &Application::onReceivedURLs);
   connect(mServer, &Server::disconnected, this, [] { exit(); });
@@ -55,26 +38,27 @@ Application::Application(int& argc, char** argv)
 
 auto Application::exec() -> int
 {
-	int dirPos = 0;
-	QStringList files;
-	for (const auto& name : args.positionalArguments()) {
-		const QFileInfo file(name);
-		if (args.isSet(QStringLiteral("dirs-first")) and file.isDir()) {
-			files.insert(dirPos++, name);
-		} else if (file.exists()) {
-			files << name;
-		}
-	}
-	if (args.isSet(QStringLiteral("once"))) {
-		files << "-o";
-	}
+  QStringList args;
+
+  if (mOpts.once) {
+    args.emplaceBack("-o");
+  }
+
+  auto pos = args.size();
+  for (const auto& name : mOpts.files) {
+    if (QFileInfo file(name); mOpts.dirs_first and file.isDir()) {
+      args.insert(pos++, name);
+    } else if (file.exists()) {
+      args.append(name);
+    }
+  }
 
   auto dialog = new QProcess(this);
   auto dpath = // clang-format sucks
     QStringLiteral("%1/../%2/%3-dialog")
       .arg(applicationDirPath(), LIBEXEC_DIR, PROGRAM_NAME);
   dialog->setProgram(dpath);
-  dialog->setArguments(files);
+  dialog->setArguments(args);
 
   auto env = QProcessEnvironment::systemEnvironment();
   env.insert(SOCKET_ENV, mServerName);
@@ -85,16 +69,15 @@ auto Application::exec() -> int
   return QCoreApplication::exec();
 }
 
-void Application::onReceivedURLs(QList<QUrl> const& urls)
+void Application::onReceivedURLs(QList<QUrl> const& urls) const
 {
-  auto puri = args.isSet(QStringLiteral("uris"));
-  auto pnul = args.isSet(QStringLiteral("null"));
   auto outs = QTextStream(stdout, QIODevice::WriteOnly);
   for (const auto& url : urls) {
-    outs << (puri ? url.url() : url.path()) << (pnul ? '\0' : '\n');
+    outs << (mOpts.uris ? url.url() : url.path());
+    outs << (mOpts.null ? '\0' : '\n');
   }
 
-  if (args.isSet(QStringLiteral("once"))) {
+  if (mOpts.once) {
     exit();
   }
 }

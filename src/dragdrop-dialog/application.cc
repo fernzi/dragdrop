@@ -1,6 +1,6 @@
-/* Copyright © 2022-2025 Fern Zapata
- * This file is under the terms of the GNU GPL ver. 3, or (at your
- * option) any later version. If a copy of the GPL wasn't included
+/* Copyright © 2022-2026 Fern Zapata
+ * This file is under the terms of the GNU GPL version 3, or (at your
+ * option) any later version. If you didn't receive a copy of the GPL
  * along with this file, see <https://www.gnu.org/licenses/>. */
 
 #include "application.hh"
@@ -9,21 +9,18 @@
 namespace DragDrop {
 
 Application::Application(int& argc, char** argv)
-	: QApplication(argc, argv)
+  : QApplication(argc, argv)
+  , mOpts(*this)
 {
-	mArgs.addOptions({
-		{{"o", "once"}, ""},
-	});
-	mArgs.process(*this);
 }
 
 auto Application::exec() -> int
 {
-	for (auto const& name : mArgs.positionalArguments()) {
+  for (auto const& name : mOpts.files) {
 		mWindow.addFile(QFileInfo(name));
 	}
 
-	mWindow.setOnce(mArgs.isSet(QStringLiteral("once")));
+  mWindow.setOnce(mOpts.once);
 	mWindow.show();
 
 	return QApplication::exec();

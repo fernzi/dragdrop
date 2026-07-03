@@ -7,6 +7,7 @@ target_link_libraries(${BIN_NAME}
   PRIVATE
     Qt::Network
     Qt::Widgets
+    common
 )
 target_compile_options(${BIN_NAME}
 PRIVATE
