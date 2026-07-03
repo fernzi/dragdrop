@@ -9,14 +9,16 @@
 #include <QFileInfo>
 #include <QProcess>
 
+using namespace Qt::StringLiterals;
+
 namespace {
 
-auto const SOCKET_ENV = QStringLiteral("DRAGDROP_SOCKET");
+auto const SOCKET_ENV = u"DRAGDROP_SOCKET"_s;
 
 auto makeServerName() -> QString
 {
   auto pid = QCoreApplication::applicationPid();
-  return QStringLiteral("%1-%2").arg(DragDrop::PROGRAM_NAME).arg(pid);
+  return "%1-%2"_L1.arg(DragDrop::PROGRAM_NAME).arg(pid);
 }
 
 } // namespace
@@ -41,7 +43,7 @@ auto Application::exec() -> int
   QStringList args;
 
   if (mOpts.once) {
-    args.emplaceBack("-o");
+    args.emplaceBack(u"-o"_s);
   }
 
   auto pos = args.size();
@@ -54,9 +56,8 @@ auto Application::exec() -> int
   }
 
   auto dialog = new QProcess(this);
-  auto dpath = // clang-format sucks
-    QStringLiteral("%1/../%2/%3-dialog")
-      .arg(applicationDirPath(), LIBEXEC_DIR, PROGRAM_NAME);
+  auto dpath = "%1/../%2/%3-dialog"_L1.arg(
+    applicationDirPath(), LIBEXEC_DIR, PROGRAM_NAME);
   dialog->setProgram(dpath);
   dialog->setArguments(args);
 

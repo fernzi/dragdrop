@@ -1,6 +1,6 @@
-/* Copyright © 2022-2025 Fern Zapata
- * This file is under the terms of the GNU GPL ver. 3, or (at your
- * option) any later version. If a copy of the GPL wasn't included
+/* Copyright © 2022-2026 Fern Zapata
+ * This file is under the terms of the GNU GPL version 3, or (at your
+ * option) any later version. If you didn't receive a copy of the GPL
  * along with this file, see <https://www.gnu.org/licenses/>. */
 
 #include "droparea.hh"
@@ -10,6 +10,8 @@
 #include <QMimeData>
 #include <QVBoxLayout>
 
+using namespace Qt::StringLiterals;
+
 namespace DragDrop {
 
 DropArea::DropArea(QWidget* parent)
@@ -17,7 +19,7 @@ DropArea::DropArea(QWidget* parent)
 {
 	setAcceptDrops(true);
 	setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-	setPixmap(QIcon::fromTheme("folder-open-symbolic").pixmap(48));
+  setPixmap(QIcon::fromTheme(u"folder-open-symbolic"_s).pixmap(48));
 }
 
 void DropArea::dragEnterEvent(QDragEnterEvent* event)

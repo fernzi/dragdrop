@@ -11,6 +11,8 @@
 #include <QScreen>
 #include <QUrl>
 
+using namespace Qt::StringLiterals;
+
 namespace DragDrop {
 
 DragArea::DragArea(QWidget* parent)
@@ -35,7 +37,7 @@ auto DragArea::sizeHint() const -> QSize
 
 auto DragArea::mimeTypes() const -> QStringList
 {
-	return QStringList(QStringLiteral("text/uri-list"));
+  return {u"text/uri-list"_s};
 }
 
 auto DragArea::mimeData(const QList<QListWidgetItem*>& items) const
