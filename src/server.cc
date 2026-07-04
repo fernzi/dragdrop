@@ -5,6 +5,7 @@
 
 #include "server.hh"
 #include "fileparser.hh"
+#include <QDebug>
 #include <QLocalServer>
 #include <QLocalSocket>
 
