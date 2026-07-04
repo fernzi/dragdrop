@@ -6,6 +6,7 @@
 #include "server.hh"
 #include "config.hh"
 #include "fileparser.hh"
+#include <QCborStreamWriter>
 #include <QCoreApplication>
 #include <QLocalServer>
 #include <QLocalSocket>
@@ -32,6 +33,16 @@ auto Server::name() const -> QString
   return mServer->serverName();
 }
 
+void Server::writePaths(QStringList const& paths)
+{
+  auto writer = QCborStreamWriter(mClient);
+  writer.startArray(paths.size());
+  for (const auto& path : paths) {
+    writer.append(path);
+  }
+  writer.endArray();
+}
+
 auto Server::generateName() -> QString
 {
   auto pid = QCoreApplication::applicationPid();
@@ -43,12 +54,16 @@ void Server::onNewConnection()
   mClient = mServer->nextPendingConnection();
   mParser = new FileParser(mClient, this);
   connect(mClient, &QLocalSocket::disconnected, this, &Server::onDisconnected);
-  connect(mParser, &FileParser::parsedURL, this, &Server::onParsedURL);
-  connect(mParser, &FileParser::finished, this, &Server::onParserFinished);
+  connect(mParser, &FileParser::parsedStrings, this, [this](auto const& strs) {
+    auto urls = QUrl::fromStringList(strs, QUrl::StrictMode);
+    emit receivedURLs(urls);
+  });
 
   // This doesn't disconnect existing clients,
   // only closes the server to new connections.
   mServer->close();
+
+  emit connected();
 }
 
 void Server::onDisconnected()
@@ -58,17 +73,6 @@ void Server::onDisconnected()
     mParser = nullptr;
   }
   emit disconnected();
-}
-
-void Server::onParsedURL(QUrl const& url)
-{
-  mURLs << url;
-}
-
-void Server::onParserFinished()
-{
-  emit receivedURLs(mURLs);
-  mURLs.clear();
 }
 
 } // DragDrop

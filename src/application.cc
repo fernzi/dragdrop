@@ -4,12 +4,11 @@
  * along with this file, see <https://www.gnu.org/licenses/>. */
 
 #include "application.hh"
+#include "client.hh"
 #include "config.hh"
 #include "server.hh"
 #include "window.hh"
-#include <QCborStreamWriter>
 #include <QFileInfo>
-#include <QLocalSocket>
 #include <QProcess>
 #include <QTimer>
 
@@ -28,36 +27,32 @@ Application::Application(int& argc, char** argv)
     // We're the CLI process:
     mServer = new Server(this);
     connect(mServer, &Server::receivedURLs, this, &Application::onUrlsRecv);
+    connect(mServer, &Server::connected, this, &Application::onClientConnected);
     connect(mServer, &Server::disconnected, this, [] { exit(); });
   } else {
     // We're the detached dialog:
-    mClient = new QLocalSocket(this);
-    mClient->connectToServer(mOpts.serverSocket);
-    qDebug() << "client socket:" << mClient->fullServerName();
-    connect(
-      mClient, &QLocalSocket::disconnected, this, &Application::waitAndExit);
+    mClient = new Client(this);
+    connect(mClient, &Client::disconnected, this, &Application::waitAndExit);
 
     mWindow = new Window;
-    connect(mWindow, &Window::filesSent, this, &Application::onFilesSent);
-    connect(mWindow, &Window::filesRecv, this, &Application::onFilesRecv);
+    connect(mWindow, &Window::filesSent, mClient, &Client::writePing);
+    connect(mWindow, &Window::filesRecv, mClient, &Client::writeUrls);
+
+    connect(mClient, &Client::connected, mWindow, &Window::show);
+    connect(mClient, &Client::readPaths, mWindow, [this](auto const& paths) {
+      for (auto const& path : paths) {
+        mWindow->addFile(QFileInfo(path));
+      }
+      mWindow->adjustSize();
+    });
   }
 }
 
 void Application::runDialog()
 {
-  mOpts.files.removeIf(
-    [](const auto& name) { return not QFileInfo::exists(name); });
-
-  if (mOpts.dirsFirst) {
-    std::stable_partition(mOpts.files.begin(),
-      mOpts.files.end(),
-      [](const auto& name) { return QFileInfo(name).isDir(); });
-  }
-
-  auto args = QStringList{u"--server-socket"_s, mServer->name(), u"--"_s};
   auto dialog = new QProcess(this);
   dialog->setProgram(applicationFilePath());
-  dialog->setArguments(args + mOpts.files);
+  dialog->setArguments({u"--server-socket"_s, mServer->name()});
   dialog->startDetached();
 }
 
@@ -70,14 +65,28 @@ auto Application::exec() -> int
     }
     runDialog();
   } else {
-    Q_ASSERT(mWindow);
-    for (auto const& file : mOpts.files) {
-      mWindow->addFile(QFileInfo(file));
-    }
-    mWindow->show();
+    mClient->connectToServer(mOpts.serverSocket);
   }
 
   return QCoreApplication::exec();
+}
+
+void Application::onClientConnected()
+{
+  auto files = mOpts.files;
+  if (files.empty()) {
+    return;
+  }
+
+  files.removeIf([](const auto& name) { return not QFileInfo::exists(name); });
+
+  if (mOpts.dirsFirst) {
+    std::stable_partition(files.begin(), files.end(), [](const auto& name) {
+      return QFileInfo(name).isDir();
+    });
+  }
+
+  mServer->writePaths(files);
 }
 
 void Application::onUrlsRecv(QList<QUrl> const& urls) const
@@ -97,21 +106,6 @@ void Application::onUrlsRecv(QList<QUrl> const& urls) const
   if (mOpts.once) {
     exit();
   }
-}
-
-void Application::onFilesRecv(QList<QUrl> const& files) const
-{
-  auto writer = QCborStreamWriter(mClient);
-  writer.startArray(files.size());
-  for (const auto& file : files) {
-    writer.append(file.url());
-  }
-  writer.endArray();
-}
-
-void Application::onFilesSent() const
-{
-  QCborStreamWriter(mClient).append(QCborSimpleType::Null);
 }
 
 void Application::waitAndExit()

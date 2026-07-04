@@ -18,7 +18,7 @@ public:
 	FileParser(QIODevice* device, QObject* parent = nullptr);
 
 signals:
-	void parsedURL(QUrl url);
+	void parsedStrings(QStringList const& strings);
 	void finished();
 
 private:

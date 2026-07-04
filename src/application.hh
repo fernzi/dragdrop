@@ -12,6 +12,7 @@ class QLocalSocket;
 
 namespace DragDrop {
 
+class Client;
 class Server;
 class Window;
 
@@ -25,6 +26,7 @@ public:
 
 private:
   void runDialog();
+  void onClientConnected();
   void onUrlsRecv(QList<QUrl> const& urls) const;
   void onFilesRecv(QList<QUrl> const& files) const;
   void onFilesSent() const;
@@ -32,7 +34,7 @@ private:
 
   Options mOpts;
   Server* mServer = nullptr;
-  QLocalSocket* mClient = nullptr;
+  Client* mClient = nullptr;
   Window* mWindow = nullptr;
 };
 

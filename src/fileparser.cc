@@ -28,18 +28,17 @@ auto decodeString(QCborStreamReader& reader) -> QString
   }
 }
 
-template<typename F>
-void handleStream(QCborStreamReader& mReader, F onParsed)
+void handleStream(QCborStreamReader& mReader, QStringList& output)
 {
   switch (mReader.type()) {
     case QCborStreamReader::ByteArray:
     case QCborStreamReader::String:
-      onParsed(decodeString(mReader));
+      output.append(decodeString(mReader));
       break;
     case QCborStreamReader::Array:
       mReader.enterContainer();
       while (not mReader.lastError() and mReader.hasNext()) {
-        handleStream(mReader, onParsed);
+        handleStream(mReader, output);
       }
       if (not mReader.lastError()) {
         mReader.leaveContainer();
@@ -65,7 +64,9 @@ void FileParser::onRead()
 {
   static QCborStreamReader reader;
   reader.setDevice(mDevice);
-  handleStream(reader, [this](auto const& url) { emit parsedURL(url); });
+  QStringList strings;
+  handleStream(reader, strings);
+  emit parsedStrings(strings);
   emit finished();
 }
 

@@ -22,24 +22,23 @@ public:
   Server(QObject* parent = nullptr);
   auto listen(QString const& name) -> bool;
   auto name() const -> QString;
+  void writePaths(QStringList const& paths);
 
   static auto generateName() -> QString;
 
 signals:
+  void connected();
   void disconnected();
   void receivedURLs(QList<QUrl> urls);
 
 private slots:
   void onNewConnection();
   void onDisconnected();
-  void onParsedURL(QUrl const& url);
-  void onParserFinished();
 
 private:
   QLocalServer* mServer = nullptr;
   QLocalSocket* mClient = nullptr;
   FileParser* mParser = nullptr;
-  QList<QUrl> mURLs;
 };
 
 } // DragDrop
