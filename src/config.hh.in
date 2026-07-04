@@ -12,6 +12,4 @@ namespace DragDrop {
 auto const PROGRAM_NAME = QStringLiteral("@PROGRAM_NAME@");
 auto const PROGRAM_VERSION = QStringLiteral("@PROGRAM_VERSION@");
 
-auto const LIBEXEC_DIR = QStringLiteral("@LIBEXEC_DIR@");
-
 } // namespace DragDrop

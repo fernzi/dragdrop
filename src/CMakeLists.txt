@@ -1,28 +1,29 @@
-set(TARGET_NAME "common")
+set(TARGET_NAME ${CMAKE_PROJECT_NAME})
 
-set(PROGRAM_NAME ${PROJECT_NAME})
-set(PROGRAM_VERSION ${PROJECT_VERSION})
-set(LIBEXEC_DIR ${CMAKE_INSTALL_LIBEXECDIR})
+set(PROGRAM_NAME ${CMAKE_PROJECT_NAME})
+set(PROGRAM_VERSION ${CMAKE_PROJECT_VERSION})
 configure_file(config.hh.in config.hh @ONLY)
 
-file(GLOB SRC CONFIGURE_DEPENDS "*.cc" "*.hh")
+file(GLOB SRC CONFIGURE_DEPENDS "*.cc" "*.hh" "*.ui")
 
-qt_add_library(${TARGET_NAME} STATIC ${SRC})
-
+qt_add_executable(${TARGET_NAME}
+  WIN32 MACOSX_BUNDLE
+  ${SRC}
+)
 target_link_libraries(${TARGET_NAME}
-  PUBLIC
+  PRIVATE
     Qt::Core
+    Qt::Network
+    Qt::Widgets
 )
 target_include_directories(${TARGET_NAME}
-PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
+  PUBLIC
+    ${CMAKE_CURRENT_BINARY_DIR}
 )
 target_compile_options(${TARGET_NAME}
-PRIVATE
-  $<$<C_COMPILER_ID:MSVC>:/W4>
-  $<$<NOT:$<C_COMPILER_ID:MSVC>>:-Wall -Wpedantic>
+  PRIVATE
+    $<$<C_COMPILER_ID:MSVC>:/W4>
+    $<$<NOT:$<C_COMPILER_ID:MSVC>>:-Wall -Wpedantic>
 )
 
-add_subdirectory(dragdrop)
-add_subdirectory(dragdrop-dialog)
+install(TARGETS ${TARGET_NAME})

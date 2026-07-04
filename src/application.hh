@@ -6,29 +6,35 @@
 #pragma once
 
 #include "options.hh"
-#include "window.hh"
 #include <QApplication>
 
 class QLocalSocket;
 
 namespace DragDrop {
 
+class Server;
+class Window;
+
 class Application : public QApplication
 {
-	Q_OBJECT
+  Q_OBJECT
 
 public:
-	Application(int& argc, char** argv);
-	auto exec() -> int;
+  Application(int& argc, char** argv);
+  auto exec() -> int;
 
 private:
+  void runDialog();
+  void onReceivedURLs(QList<QUrl> const& urls) const;
   void onFilesRecv(const QList<QUrl>& files);
   void onFilesSent();
   void waitAndExit();
 
   Options mOpts;
+  QString mServerName;
+  Server* mServer = nullptr;
   QLocalSocket* mClient = nullptr;
-	Window mWindow;
+  Window* mWindow = nullptr;
 };
 
 }; // namespace DragDrop

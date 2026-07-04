@@ -4,9 +4,9 @@
  * along with this file, see <https://www.gnu.org/licenses/>. */
 
 #include "server.hh"
+#include "fileparser.hh"
 #include <QLocalServer>
 #include <QLocalSocket>
-#include <fileparser.hh>
 
 namespace DragDrop {
 
@@ -26,8 +26,7 @@ void Server::onNewConnection()
 {
   mClient = mServer->nextPendingConnection();
   mParser = new FileParser(mClient, this);
-  connect(
-    mClient, &QLocalSocket::disconnected, this, &Server::onDisconnected);
+  connect(mClient, &QLocalSocket::disconnected, this, &Server::onDisconnected);
   connect(mParser, &FileParser::parsedURL, this, &Server::onParsedURL);
   connect(mParser, &FileParser::finished, this, &Server::onParserFinished);
 
