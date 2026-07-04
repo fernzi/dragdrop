@@ -5,9 +5,11 @@
 
 #pragma once
 
+#include "options.hh"
 #include "window.hh"
 #include <QApplication>
-#include "options.hh"
+
+class QLocalSocket;
 
 namespace DragDrop {
 
@@ -20,7 +22,12 @@ public:
 	auto exec() -> int;
 
 private:
+  void onFilesRecv(const QList<QUrl>& files);
+  void onFilesSent();
+  void waitAndExit();
+
   Options mOpts;
+  QLocalSocket* mClient = nullptr;
 	Window mWindow;
 };
 

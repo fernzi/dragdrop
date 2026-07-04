@@ -41,14 +41,11 @@ Application::Application(int& argc, char** argv)
 auto Application::exec() -> int
 {
   QStringList args;
-
-  if (mOpts.once) {
-    args.emplaceBack(u"-o"_s);
-  }
+  args << u"--server-socket"_s << mServerName;
 
   auto pos = args.size();
   for (const auto& name : mOpts.files) {
-    if (QFileInfo file(name); mOpts.dirs_first and file.isDir()) {
+    if (QFileInfo file(name); mOpts.dirsFirst and file.isDir()) {
       args.insert(pos++, name);
     } else if (file.exists()) {
       args.append(name);
@@ -60,11 +57,6 @@ auto Application::exec() -> int
     applicationDirPath(), LIBEXEC_DIR, PROGRAM_NAME);
   dialog->setProgram(dpath);
   dialog->setArguments(args);
-
-  auto env = QProcessEnvironment::systemEnvironment();
-  env.insert(SOCKET_ENV, mServerName);
-  dialog->setProcessEnvironment(env);
-
   dialog->startDetached();
 
   return QCoreApplication::exec();

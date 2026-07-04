@@ -14,7 +14,8 @@ struct Options
   bool once;
   bool uris;
   bool null;
-  bool dirs_first;
+  bool dirsFirst;
+  QString serverSocket;
   QStringList files;
 
   Options(QCoreApplication const& app);

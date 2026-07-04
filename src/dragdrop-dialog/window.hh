@@ -7,12 +7,10 @@
 
 #include "dragarea.hh"
 #include "droparea.hh"
-#include <QCborStreamWriter>
 #include <QDialog>
 #include <QFileInfo>
 #include <QStackedLayout>
 #include <QUrl>
-#include <QLocalSocket>
 
 namespace DragDrop {
 
@@ -24,18 +22,13 @@ public:
 	Window(QWidget* parent = nullptr);
 
 	void addFile(QFileInfo const& file);
-	void setOnce(bool once);
+  void addFiles(QList<QFileInfo> const& files);
 
-public slots:
-	void onFilesRecv(const QList<QUrl>& files);
-	void onFilesSent();
+signals:
+  void filesRecv(const QList<QUrl>& files);
+  void filesSent();
 
 private:
-	void waitAndExit();
-
-  bool mOnce = false;
-  QLocalSocket mOutput;
-	QCborStreamWriter mWriter;
 	QStackedLayout mLayout;
 	DragArea mDrag;
 	DropArea mDrop;

@@ -37,7 +37,16 @@ Options::Options(QCoreApplication const& app)
     },
   };
 
+  auto optServerSocket = QCommandLineOption{
+    "server-socket",
+    qo::tr("Local socket ID"),
+    "socket",
+  };
+  // Why aren't these available on the constructor?
+  optServerSocket.setFlags(QCommandLineOption::HiddenFromHelp);
+
   args.addOptions(opts);
+  args.addOption(optServerSocket);
   args.addPositionalArgument(
     "files", qo::tr("Files to display"), qo::tr("[files...]"));
 
@@ -46,7 +55,8 @@ Options::Options(QCoreApplication const& app)
   once = args.isSet(opts[0]);
   uris = args.isSet(opts[1]);
   null = args.isSet(opts[2]);
-  dirs_first = args.isSet(opts[3]);
+  dirsFirst = args.isSet(opts[3]);
+  serverSocket = args.value(optServerSocket);
   files = args.positionalArguments();
 }
 
