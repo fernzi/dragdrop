@@ -4,23 +4,38 @@
  * along with this file, see <https://www.gnu.org/licenses/>. */
 
 #include "server.hh"
+#include "config.hh"
 #include "fileparser.hh"
-#include <QDebug>
+#include <QCoreApplication>
 #include <QLocalServer>
 #include <QLocalSocket>
 
 namespace DragDrop {
 
-Server::Server(QString const& name, QObject* parent)
+Server::Server(QObject* parent)
   : QObject(parent)
   , mServer(new QLocalServer(this))
 {
-  QLocalServer::removeServer(name);
   mServer->setSocketOptions(QLocalServer::UserAccessOption);
   connect(
     mServer, &QLocalServer::newConnection, this, &Server::onNewConnection);
-  mServer->listen(name);
-  qDebug() << "server socket:" << mServer->fullServerName();
+}
+
+auto Server::listen(QString const& name) -> bool
+{
+  QLocalServer::removeServer(name);
+  return mServer->listen(name);
+}
+
+auto Server::name() const -> QString
+{
+  return mServer->serverName();
+}
+
+auto Server::generateName() -> QString
+{
+  auto pid = QCoreApplication::applicationPid();
+  return DragDrop::PROGRAM_NAME + '-' + QString::number(pid);
 }
 
 void Server::onNewConnection()

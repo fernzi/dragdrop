@@ -15,29 +15,18 @@
 
 using namespace Qt::StringLiterals;
 
-namespace {
-
-auto makeServerName() -> QString
-{
-  auto pid = QCoreApplication::applicationPid();
-  return DragDrop::PROGRAM_NAME % '-' % QString::number(pid);
-}
-
-} // namespace
-
 namespace DragDrop {
 
 Application::Application(int& argc, char** argv)
   : QApplication(argc, argv)
   , mOpts(*this)
-  , mServerName(makeServerName())
 {
   setApplicationName(PROGRAM_NAME);
   setApplicationVersion(PROGRAM_VERSION);
 
   if (mOpts.serverSocket.isEmpty()) {
     // We're the CLI process:
-    mServer = new Server(mServerName, this);
+    mServer = new Server(this);
     connect(mServer, &Server::receivedURLs, this, &Application::onUrlsRecv);
     connect(mServer, &Server::disconnected, this, [] { exit(); });
   } else {
@@ -65,16 +54,20 @@ void Application::runDialog()
       [](const auto& name) { return QFileInfo(name).isDir(); });
   }
 
-  auto args = mOpts.files << u"--server-socket"_s << mServerName;
+  auto args = QStringList{u"--server-socket"_s, mServer->name(), u"--"_s};
   auto dialog = new QProcess(this);
   dialog->setProgram(applicationFilePath());
-  dialog->setArguments(args);
+  dialog->setArguments(args + mOpts.files);
   dialog->startDetached();
 }
 
 auto Application::exec() -> int
 {
   if (mServer) {
+    if (auto name = Server::generateName(); not mServer->listen(name)) {
+      qCritical() << "could not start server at:" << name;
+      exit(1);
+    }
     runDialog();
   } else {
     Q_ASSERT(mWindow);

@@ -19,7 +19,11 @@ class Server : public QObject
   Q_OBJECT
 
 public:
-  Server(QString const& name, QObject* parent = nullptr);
+  Server(QObject* parent = nullptr);
+  auto listen(QString const& name) -> bool;
+  auto name() const -> QString;
+
+  static auto generateName() -> QString;
 
 signals:
   void disconnected();

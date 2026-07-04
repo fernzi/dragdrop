@@ -31,7 +31,6 @@ private:
   void waitAndExit();
 
   Options mOpts;
-  QString mServerName;
   Server* mServer = nullptr;
   QLocalSocket* mClient = nullptr;
   Window* mWindow = nullptr;
