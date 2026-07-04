@@ -25,9 +25,9 @@ public:
 
 private:
   void runDialog();
-  void onReceivedURLs(QList<QUrl> const& urls) const;
-  void onFilesRecv(const QList<QUrl>& files);
-  void onFilesSent();
+  void onUrlsRecv(QList<QUrl> const& urls) const;
+  void onFilesRecv(QList<QUrl> const& files) const;
+  void onFilesSent() const;
   void waitAndExit();
 
   Options mOpts;

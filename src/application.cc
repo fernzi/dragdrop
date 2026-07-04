@@ -17,12 +17,10 @@ using namespace Qt::StringLiterals;
 
 namespace {
 
-auto const SOCKET_ENV = u"DRAGDROP_SOCKET"_s;
-
 auto makeServerName() -> QString
 {
   auto pid = QCoreApplication::applicationPid();
-  return "%1-%2"_L1.arg(DragDrop::PROGRAM_NAME).arg(pid);
+  return DragDrop::PROGRAM_NAME % '-' % QString::number(pid);
 }
 
 } // namespace
@@ -40,7 +38,7 @@ Application::Application(int& argc, char** argv)
   if (mOpts.serverSocket.isEmpty()) {
     // We're the CLI process:
     mServer = new Server(mServerName, this);
-    connect(mServer, &Server::receivedURLs, this, &Application::onReceivedURLs);
+    connect(mServer, &Server::receivedURLs, this, &Application::onUrlsRecv);
     connect(mServer, &Server::disconnected, this, [] { exit(); });
   } else {
     // We're the detached dialog:
@@ -58,18 +56,16 @@ Application::Application(int& argc, char** argv)
 
 void Application::runDialog()
 {
-  QStringList args;
-  args << u"--server-socket"_s << mServerName;
+  mOpts.files.removeIf(
+    [](const auto& name) { return not QFileInfo::exists(name); });
 
-  auto pos = args.size();
-  for (const auto& name : mOpts.files) {
-    if (QFileInfo file(name); mOpts.dirsFirst and file.isDir()) {
-      args.insert(pos++, name);
-    } else if (file.exists()) {
-      args.append(name);
-    }
+  if (mOpts.dirsFirst) {
+    std::stable_partition(mOpts.files.begin(),
+      mOpts.files.end(),
+      [](const auto& name) { return QFileInfo(name).isDir(); });
   }
 
+  auto args = mOpts.files << u"--server-socket"_s << mServerName;
   auto dialog = new QProcess(this);
   dialog->setProgram(applicationFilePath());
   dialog->setArguments(args);
@@ -91,12 +87,18 @@ auto Application::exec() -> int
   return QCoreApplication::exec();
 }
 
-void Application::onReceivedURLs(QList<QUrl> const& urls) const
+void Application::onUrlsRecv(QList<QUrl> const& urls) const
 {
   auto outs = QTextStream(stdout, QIODevice::WriteOnly);
-  for (const auto& url : urls) {
-    outs << (mOpts.uris ? url.url() : url.path());
-    outs << (mOpts.null ? '\0' : '\n');
+  auto usep = mOpts.null ? '\0' : '\n';
+  if (mOpts.uris) {
+    for (const auto& url : urls) {
+      outs << url.url() << usep;
+    }
+  } else {
+    for (const auto& url : urls) {
+      outs << url.path() << usep;
+    }
   }
 
   if (mOpts.once) {
@@ -104,7 +106,7 @@ void Application::onReceivedURLs(QList<QUrl> const& urls) const
   }
 }
 
-void Application::onFilesRecv(const QList<QUrl>& files)
+void Application::onFilesRecv(QList<QUrl> const& files) const
 {
   auto writer = QCborStreamWriter(mClient);
   writer.startArray(files.size());
@@ -114,7 +116,7 @@ void Application::onFilesRecv(const QList<QUrl>& files)
   writer.endArray();
 }
 
-void Application::onFilesSent()
+void Application::onFilesSent() const
 {
   QCborStreamWriter(mClient).append(QCborSimpleType::Null);
 }
