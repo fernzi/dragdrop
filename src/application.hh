@@ -25,12 +25,13 @@ public:
   auto exec() -> int;
 
 private:
+  void setupServer();
+  void setupClient();
   void runDialog();
   void onClientConnected();
   void onUrlsRecv(QList<QUrl> const& urls) const;
   void onFilesRecv(QList<QUrl> const& files) const;
   void onFilesSent() const;
-  void waitAndExit();
 
   Options mOpts;
   Server* mServer = nullptr;

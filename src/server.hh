@@ -33,7 +33,6 @@ signals:
 
 private slots:
   void onNewConnection();
-  void onDisconnected();
 
 private:
   QLocalServer* mServer = nullptr;

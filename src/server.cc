@@ -60,7 +60,13 @@ void Server::onNewConnection()
 {
   mClient = mServer->nextPendingConnection();
   mParser = new FileParser(mClient, this);
-  connect(mClient, &QLocalSocket::disconnected, this, &Server::onDisconnected);
+  connect(mClient, &QLocalSocket::disconnected, this, [this] {
+    if (mParser) {
+      mParser->deleteLater();
+      mParser = nullptr;
+    }
+    emit disconnected();
+  });
   connect(mParser, &FileParser::parsedStrings, this, [this](auto const& strs) {
     auto urls = QUrl::fromStringList(strs, QUrl::StrictMode);
     emit receivedURLs(urls);
@@ -71,15 +77,6 @@ void Server::onNewConnection()
   mServer->close();
 
   emit connected();
-}
-
-void Server::onDisconnected()
-{
-  if (mParser) {
-    mParser->deleteLater();
-    mParser = nullptr;
-  }
-  emit disconnected();
 }
 
 } // DragDrop

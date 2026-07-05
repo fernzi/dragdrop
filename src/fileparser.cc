@@ -67,7 +67,6 @@ void FileParser::onRead()
   QStringList strings;
   handleStream(reader, strings);
   emit parsedStrings(strings);
-  emit finished();
 }
 
 }; // namespace DragDrop

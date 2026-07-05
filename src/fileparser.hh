@@ -19,7 +19,6 @@ public:
 
 signals:
 	void parsedStrings(QStringList const& strings);
-	void finished();
 
 private:
 	QIODevice* mDevice;

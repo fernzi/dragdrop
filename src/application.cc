@@ -25,27 +25,40 @@ Application::Application(int& argc, char** argv)
 
   if (mOpts.serverSocket.isEmpty()) {
     // We're the CLI process:
-    mServer = new Server(this);
-    connect(mServer, &Server::receivedURLs, this, &Application::onUrlsRecv);
-    connect(mServer, &Server::connected, this, &Application::onClientConnected);
-    connect(mServer, &Server::disconnected, this, [] { exit(); });
+    setupServer();
   } else {
     // We're the detached dialog:
-    mClient = new Client(this);
-    connect(mClient, &Client::disconnected, this, &Application::waitAndExit);
-
-    mWindow = new Window;
-    connect(mWindow, &Window::filesSent, mClient, &Client::writePing);
-    connect(mWindow, &Window::filesRecv, mClient, &Client::writeUrls);
-
-    connect(mClient, &Client::connected, mWindow, &Window::show);
-    connect(mClient, &Client::readPaths, mWindow, [this](auto const& paths) {
-      for (auto const& path : paths) {
-        mWindow->addFile(QFileInfo(path));
-      }
-      mWindow->adjustSize();
-    });
+    setupClient();
   }
+}
+
+void Application::setupServer()
+{
+  mServer = new Server(this);
+  connect(mServer, &Server::receivedURLs, this, &Application::onUrlsRecv);
+  connect(mServer, &Server::connected, this, &Application::onClientConnected);
+  connect(mServer, &Server::disconnected, this, [] { exit(); });
+}
+
+void Application::setupClient()
+{
+  mClient = new Client(this);
+  connect(mClient, &Client::disconnected, this, [this] {
+    mWindow->hide();
+    QTimer::singleShot(30 * 1000, this, [] { exit(); });
+  });
+
+  mWindow = new Window;
+  connect(mWindow, &Window::filesSent, mClient, &Client::writePing);
+  connect(mWindow, &Window::filesRecv, mClient, &Client::writeUrls);
+
+  connect(mClient, &Client::connected, mWindow, &Window::show);
+  connect(mClient, &Client::readPaths, mWindow, [this](auto const& paths) {
+    for (auto const& path : paths) {
+      mWindow->addFile(QFileInfo(path));
+    }
+    mWindow->adjustSize();
+  });
 }
 
 void Application::runDialog()
@@ -106,12 +119,6 @@ void Application::onUrlsRecv(QList<QUrl> const& urls) const
   if (mOpts.once) {
     exit();
   }
-}
-
-void Application::waitAndExit()
-{
-  mWindow->hide();
-  QTimer::singleShot(30 * 1000, this, [] { exit(); });
 }
 
 }; // namespace DragDrop
