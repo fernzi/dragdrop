@@ -10,6 +10,9 @@
 #include <QCoreApplication>
 #include <QLocalServer>
 #include <QLocalSocket>
+#include <QStandardPaths>
+
+using namespace Qt::StringLiterals;
 
 namespace DragDrop {
 
@@ -45,8 +48,12 @@ void Server::writePaths(QStringList const& paths)
 
 auto Server::generateName() -> QString
 {
+  QString pfx;
+#if defined(Q_OS_UNIX) && !defined(Q_OS_APPLE)
+  pfx = QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation) + '/';
+#endif
   auto pid = QCoreApplication::applicationPid();
-  return DragDrop::PROGRAM_NAME + '-' + QString::number(pid);
+  return "%1%2-%3"_L1.arg(pfx, DragDrop::PROGRAM_NAME).arg(pid);
 }
 
 void Server::onNewConnection()
