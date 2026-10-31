@@ -12,11 +12,21 @@ namespace DragDrop {
 
 Options::Options(QCoreApplication const& app)
 {
-  auto args = QCommandLineParser();
-  args.setApplicationDescription(
+  init(&app, nullptr);
+}
+
+Options::Options(QStringList const& args)
+{
+  init(nullptr, &args);
+}
+
+void Options::init(QCoreApplication const* app, QStringList const* args)
+{
+  auto parser = QCommandLineParser();
+  parser.setApplicationDescription(
     qo::tr("Drag-and-drop file source for the terminal"));
-  args.addHelpOption();
-  args.addVersionOption();
+  parser.addHelpOption();
+  parser.addVersionOption();
 
   auto opts = QList<QCommandLineOption>{
     {
@@ -45,19 +55,24 @@ Options::Options(QCoreApplication const& app)
   // Why aren't these available on the constructor?
   optServerSocket.setFlags(QCommandLineOption::HiddenFromHelp);
 
-  args.addOptions(opts);
-  args.addOption(optServerSocket);
-  args.addPositionalArgument(
+  parser.addOptions(opts);
+  parser.addOption(optServerSocket);
+  parser.addPositionalArgument(
     "files", qo::tr("Files to display"), qo::tr("[files...]"));
 
-  args.process(app);
+  if (app) {
+    parser.process(*app);
+  } else {
+    Q_ASSERT(args);
+    parser.parse(*args);
+  }
 
-  once = args.isSet(opts[0]);
-  uris = args.isSet(opts[1]);
-  null = args.isSet(opts[2]);
-  dirsFirst = args.isSet(opts[3]);
-  serverSocket = args.value(optServerSocket);
-  files = args.positionalArguments();
+  once = parser.isSet(opts[0]);
+  uris = parser.isSet(opts[1]);
+  null = parser.isSet(opts[2]);
+  dirsFirst = parser.isSet(opts[3]);
+  serverSocket = parser.value(optServerSocket);
+  files = parser.positionalArguments();
 }
 
 } // namespace DragDrop

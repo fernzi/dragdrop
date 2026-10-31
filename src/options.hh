@@ -6,19 +6,24 @@
 #pragma once
 
 #include <QCoreApplication>
+#include <QStringList>
 
 namespace DragDrop {
 
 struct Options
 {
-  bool once;
-  bool uris;
-  bool null;
-  bool dirsFirst;
+  bool once = false;
+  bool uris = false;
+  bool null = false;
+  bool dirsFirst = false;
   QString serverSocket;
   QStringList files;
 
-  Options(QCoreApplication const& app);
+  explicit Options(QCoreApplication const& app);
+  explicit Options(QStringList const& args);
+
+private:
+  void init(QCoreApplication const* app, QStringList const* args);
 };
 
 } // namespace DragDrop
