@@ -7,25 +7,22 @@
 #include <QCborStreamReader>
 #include <QIODevice>
 
-using namespace Qt::StringLiterals;
-
 namespace {
 
 auto decodeString(QCborStreamReader& reader) -> QString
 {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+  return reader.readAllString();
+#else
   QString str;
   str.reserve(reader.currentStringChunkSize());
 
-  while (true) {
-    auto res = reader.readString();
-    if (res.status == QCborStreamReader::EndOfString) {
-      return str;
-    }
-    if (res.status != QCborStreamReader::Ok) {
-      return u""_s;
-    }
+  decltype(reader.readString()) res;
+  while ((res = reader.readString()).status == QCborStreamReader::Ok) {
     str += res.data;
   }
+  return res.status != QCborStreamReader::Error ? str : QString{};
+#endif
 }
 
 void handleStream(QCborStreamReader& mReader, QStringList& output)
