@@ -24,8 +24,7 @@ Window::Window(QWidget* parent)
 
 void Window::addFile(QFileInfo const& file)
 {
-	mDrag.addFile(file);
-	mLayout.setCurrentWidget(&mDrag);
+	addFiles({file});
 }
 
 void Window::addFiles(QList<QFileInfo> const& files)

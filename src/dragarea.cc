@@ -10,6 +10,7 @@
 #include <QMimeDatabase>
 #include <QScreen>
 #include <QUrl>
+#include <ranges>
 
 using namespace Qt::StringLiterals;
 
@@ -41,15 +42,14 @@ auto DragArea::mimeTypes() const -> QStringList
 }
 
 auto DragArea::mimeData(const QList<QListWidgetItem*>& items) const
-	-> QMimeData*
+  -> QMimeData*
 {
-	QList<QUrl> urls;
-	for (auto const& item : items) {
-		urls << item->data(Qt::UserRole).toUrl();
-	}
-	auto data = new QMimeData;
-	data->setUrls(urls);
-	return data;
+  auto urls = items | std::views::transform([](auto item) {
+    return item->data(Qt::UserRole).toUrl();
+  });
+  auto data = new QMimeData;
+  data->setUrls(QList(urls.begin(), urls.end()));
+  return data;
 }
 
 void DragArea::startDrag(Qt::DropActions actions)

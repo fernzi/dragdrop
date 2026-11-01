@@ -12,7 +12,9 @@
 #include <QProcess>
 #include <QTimer>
 #include <algorithm>
+#include <ranges>
 
+using std::views::transform;
 using namespace Qt::StringLiterals;
 
 namespace {
@@ -79,9 +81,8 @@ auto Application::startClient() -> bool
 
   connect(mClient, &Client::connected, mWindow, &Window::show);
   connect(mClient, &Client::readPaths, mWindow, [this](auto const& paths) {
-    for (auto const& path : paths) {
-      mWindow->addFile(QFileInfo(path));
-    }
+    auto fs = paths | transform([](auto const& p) { return QFileInfo(p); });
+    mWindow->addFiles(QList(fs.begin(), fs.end()));
     mWindow->adjustSize();
   });
 
@@ -103,14 +104,11 @@ void Application::onUrlsRecv(QList<QUrl> const& urls) const
 {
   auto outs = QTextStream(stdout, QIODevice::WriteOnly);
   auto usep = mOpts.null ? '\0' : '\n';
-  if (mOpts.uris) {
-    for (const auto& url : urls) {
-      outs << url.url() << usep;
-    }
-  } else {
-    for (const auto& url : urls) {
-      outs << url.path() << usep;
-    }
+  auto filt = mOpts.uris ? [](QUrl const& u) { return u.url(); }
+                         : [](auto const& u) { return u.path(); };
+
+  for (auto const& url : urls | transform(filt)) {
+    outs << url << usep;
   }
 
   if (mOpts.once) {
