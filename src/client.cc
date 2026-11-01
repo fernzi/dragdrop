@@ -8,6 +8,7 @@
 #include <QCborStreamWriter>
 #include <QDebug>
 #include <QLocalSocket>
+#include <ranges>
 
 namespace DragDrop {
 
@@ -36,12 +37,8 @@ void Client::connectToServer(QString const& name)
 
 void Client::writeUrls(QList<QUrl> const& urls)
 {
-  auto writer = QCborStreamWriter(mSocket);
-  writer.startArray(urls.size());
-  for (const auto& url : urls) {
-    writer.append(url.url());
-  }
-  writer.endArray();
+  FileParser::writeStrings(mSocket,
+    urls | std::views::transform([](auto const& u) { return u.url(); }));
 }
 
 void Client::writePing()

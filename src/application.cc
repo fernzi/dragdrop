@@ -81,8 +81,8 @@ auto Application::startClient() -> bool
 
   connect(mClient, &Client::connected, mWindow, &Window::show);
   connect(mClient, &Client::readPaths, mWindow, [this](auto const& paths) {
-    auto fs = paths | transform([](auto const& p) { return QFileInfo(p); });
-    mWindow->addFiles(QList(fs.begin(), fs.end()));
+    mWindow->addFiles(
+      paths | transform([](auto const& p) { return QFileInfo(p); }));
     mWindow->adjustSize();
   });
 

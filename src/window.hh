@@ -7,6 +7,7 @@
 
 #include "dragarea.hh"
 #include "droparea.hh"
+#include "util.hh"
 #include <QDialog>
 #include <QFileInfo>
 #include <QStackedLayout>
@@ -16,22 +17,28 @@ namespace DragDrop {
 
 class Window : public QDialog
 {
-	Q_OBJECT
+  Q_OBJECT
 
 public:
-	Window(QWidget* parent = nullptr);
+  explicit Window(QWidget* parent = nullptr);
 
-	void addFile(QFileInfo const& file);
-  void addFiles(QList<QFileInfo> const& files);
+  void addFile(QFileInfo const& file);
+  void addFiles(Util::RangeOf<QFileInfo> auto&& files)
+  {
+    for (const auto& file : files) {
+      mDrag.addFile(file);
+    }
+    mLayout.setCurrentWidget(&mDrag);
+  }
 
 signals:
   void filesRecv(const QList<QUrl>& files);
   void filesSent();
 
 private:
-	QStackedLayout mLayout;
-	DragArea mDrag;
-	DropArea mDrop;
+  QStackedLayout mLayout;
+  DragArea mDrag;
+  DropArea mDrop;
 };
 
 } // namespace DragDrop

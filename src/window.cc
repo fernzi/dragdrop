@@ -8,31 +8,23 @@
 namespace DragDrop {
 
 Window::Window(QWidget* parent)
-	: QDialog(parent)
-	, mLayout(this)
-	, mDrag(this)
-	, mDrop(this)
+  : QDialog(parent)
+  , mLayout(this)
+  , mDrag(this)
+  , mDrop(this)
 {
   setWindowTitle(tr("Drag & Drop"));
 
   connect(&mDrop, &DropArea::filesRecv, this, &Window::filesRecv);
   connect(&mDrag, &DragArea::filesSent, this, &Window::filesSent);
 
-	mLayout.addWidget(&mDrop);
-	mLayout.addWidget(&mDrag);
+  mLayout.addWidget(&mDrop);
+  mLayout.addWidget(&mDrag);
 }
 
 void Window::addFile(QFileInfo const& file)
 {
-	addFiles({file});
-}
-
-void Window::addFiles(QList<QFileInfo> const& files)
-{
-  for (const auto& file : files) {
-    mDrag.addFile(file);
-  }
-  mLayout.setCurrentWidget(&mDrag);
+  addFiles(std::initializer_list{file});
 }
 
 }; // namespace DragDrop

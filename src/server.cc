@@ -6,11 +6,11 @@
 #include "server.hh"
 #include "config.hh"
 #include "fileparser.hh"
-#include <QCborStreamWriter>
 #include <QCoreApplication>
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QStandardPaths>
+#include <QUrl>
 
 using namespace Qt::StringLiterals;
 
@@ -38,12 +38,7 @@ auto Server::name() const -> QString
 
 void Server::writePaths(QStringList const& paths)
 {
-  auto writer = QCborStreamWriter(mClient);
-  writer.startArray(paths.size());
-  for (const auto& path : paths) {
-    writer.append(path);
-  }
-  writer.endArray();
+  FileParser::writeStrings(mClient, paths);
 }
 
 auto Server::generateName() -> QString
