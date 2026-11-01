@@ -5,6 +5,7 @@
 
 #include "options.hh"
 #include <QCommandLineParser>
+#include <array>
 
 using qo = QObject;
 
@@ -28,35 +29,19 @@ void Options::init(QCoreApplication const* app, QStringList const* args)
   parser.addHelpOption();
   parser.addVersionOption();
 
-  auto opts = QList<QCommandLineOption>{
-    {
-      {"o", "once"},
-      qo::tr("Exit after a single drag or drop."),
-    },
-    {
-      {"u", "uris"},
-      qo::tr("Print URIs instead of paths on drop."),
-    },
-    {
-      {"0", "null"},
-      qo::tr("Separate printed paths with a null character."),
-    },
-    {
-      "dirs-first",
-      qo::tr("List directories before files."),
-    },
-  };
+  auto opts = std::to_array<QCommandLineOption>({
+    {{"o", "once"}, qo::tr("Exit after a single drag or drop.")},
+    {{"u", "uris"}, qo::tr("Print URIs instead of paths on drop.")},
+    {{"0", "null"}, qo::tr("Separate printed paths with a null character.")},
+    {"dirs-first", qo::tr("List directories before files.")},
+    {"server-socket", qo::tr("Local socket ID"), "socket"},
+  });
+  auto& [optOnce, optUris, optNull, optDirs, optServerSocket] = opts;
 
-  auto optServerSocket = QCommandLineOption{
-    "server-socket",
-    qo::tr("Local socket ID"),
-    "socket",
-  };
   // Why aren't these available on the constructor?
   optServerSocket.setFlags(QCommandLineOption::HiddenFromHelp);
 
-  parser.addOptions(opts);
-  parser.addOption(optServerSocket);
+  parser.addOptions(QList(opts.begin(), opts.end()));
   parser.addPositionalArgument(
     "files", qo::tr("Files to display"), qo::tr("[files...]"));
 
@@ -67,10 +52,10 @@ void Options::init(QCoreApplication const* app, QStringList const* args)
     parser.parse(*args);
   }
 
-  once = parser.isSet(opts[0]);
-  uris = parser.isSet(opts[1]);
-  null = parser.isSet(opts[2]);
-  dirsFirst = parser.isSet(opts[3]);
+  once = parser.isSet(optOnce);
+  uris = parser.isSet(optUris);
+  null = parser.isSet(optNull);
+  dirsFirst = parser.isSet(optDirs);
   serverSocket = parser.value(optServerSocket);
   files = parser.positionalArguments();
 }
