@@ -11,6 +11,7 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QTimer>
+#include <algorithm>
 
 using namespace Qt::StringLiterals;
 
@@ -39,9 +40,8 @@ Application::Application(int& argc, char** argv)
     [](const auto& name) { return not QFileInfo::exists(name); });
 
   if (mOpts.dirsFirst) {
-    std::stable_partition(mOpts.files.begin(),
-      mOpts.files.end(),
-      [](const auto& name) { return QFileInfo(name).isDir(); });
+    std::ranges::stable_partition(
+      mOpts.files, [](const auto& name) { return QFileInfo(name).isDir(); });
   }
 }
 
