@@ -5,6 +5,7 @@
 
 #include "client.hh"
 #include "fileparser.hh"
+#include "util.hh"
 #include <QCborStreamWriter>
 #include <QDebug>
 #include <QLocalSocket>
@@ -37,7 +38,7 @@ void Client::connectToServer(QString const& name)
 
 void Client::writeUrls(QList<QUrl> const& urls)
 {
-  FileParser::writeStrings(mSocket,
+  Util::writeCborStrings(mSocket,
     urls | std::views::transform([](auto const& u) { return u.url(); }));
 }
 

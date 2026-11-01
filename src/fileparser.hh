@@ -5,8 +5,6 @@
 
 #pragma once
 
-#include "util.hh"
-#include <QCborStreamWriter>
 #include <QObject>
 
 namespace DragDrop {
@@ -17,17 +15,6 @@ class FileParser : public QObject
 
 public:
   explicit FileParser(QIODevice* device, QObject* parent = nullptr);
-
-  static void writeStrings(
-    QIODevice* device, Util::SizedRangeOf<QString> auto&& strings)
-  {
-    auto writer = QCborStreamWriter(device);
-    writer.startArray(std::ranges::size(strings));
-    for (auto const& val : strings) {
-      writer.append(val);
-    }
-    writer.endArray();
-  }
 
 signals:
   void parsedStrings(QStringList const& strings);

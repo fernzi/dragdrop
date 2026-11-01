@@ -6,6 +6,7 @@
 #include "server.hh"
 #include "config.hh"
 #include "fileparser.hh"
+#include "util.hh"
 #include <QCoreApplication>
 #include <QLocalServer>
 #include <QLocalSocket>
@@ -38,7 +39,7 @@ auto Server::name() const -> QString
 
 void Server::writePaths(QStringList const& paths)
 {
-  FileParser::writeStrings(mClient, paths);
+  Util::writeCborStrings(mClient, paths);
 }
 
 auto Server::generateName() -> QString
