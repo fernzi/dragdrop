@@ -21,17 +21,15 @@ class Application : public QApplication
   Q_OBJECT
 
 public:
-  Application(int& argc, char** argv);
-  auto exec() -> int;
+  explicit Application(int& argc, char** argv);
+
+  auto isServer() const -> bool;
+  auto startServer() -> bool;
+  auto startClient() -> bool;
 
 private:
-  void setupServer();
-  void setupClient();
-  void runDialog();
   void onClientConnected();
   void onUrlsRecv(QList<QUrl> const& urls) const;
-  void onFilesRecv(QList<QUrl> const& files) const;
-  void onFilesSent() const;
 
   Options mOpts;
   Server* mServer = nullptr;

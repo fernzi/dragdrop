@@ -8,5 +8,6 @@
 auto main(int argc, char** argv) -> int
 {
   auto app = DragDrop::Application(argc, argv);
-  return app.exec();
+  auto res = app.isServer() ? app.startServer() : app.startClient();
+  return res ? DragDrop::Application::exec() : EXIT_FAILURE;
 }

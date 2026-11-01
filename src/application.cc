@@ -14,6 +14,18 @@
 
 using namespace Qt::StringLiterals;
 
+namespace {
+
+void runDialog(QString const& name, QObject* parent = nullptr)
+{
+  auto dialog = new QProcess(parent);
+  dialog->setProgram(QCoreApplication::applicationFilePath());
+  dialog->setArguments({u"--server-socket"_s, name});
+  dialog->startDetached();
+}
+
+} // namespace
+
 namespace DragDrop {
 
 Application::Application(int& argc, char** argv)
@@ -23,24 +35,37 @@ Application::Application(int& argc, char** argv)
   setApplicationName(PROGRAM_NAME);
   setApplicationVersion(PROGRAM_VERSION);
 
-  if (mOpts.serverSocket.isEmpty()) {
-    // We're the CLI process:
-    setupServer();
-  } else {
-    // We're the detached dialog:
-    setupClient();
+  mOpts.files.removeIf(
+    [](const auto& name) { return not QFileInfo::exists(name); });
+
+  if (mOpts.dirsFirst) {
+    std::stable_partition(mOpts.files.begin(),
+      mOpts.files.end(),
+      [](const auto& name) { return QFileInfo(name).isDir(); });
   }
 }
 
-void Application::setupServer()
+auto Application::isServer() const -> bool
+{
+  return mOpts.serverSocket.isEmpty();
+}
+
+auto Application::startServer() -> bool
 {
   mServer = new Server(this);
   connect(mServer, &Server::receivedURLs, this, &Application::onUrlsRecv);
   connect(mServer, &Server::connected, this, &Application::onClientConnected);
   connect(mServer, &Server::disconnected, this, [] { exit(); });
+
+  if (auto name = Server::generateName(); not mServer->listen(name)) {
+    qCritical() << "could not start server at:" << name;
+    return false;
+  }
+  runDialog(mServer->name(), this);
+  return true;
 }
 
-void Application::setupClient()
+auto Application::startClient() -> bool
 {
   mClient = new Client(this);
   connect(mClient, &Client::disconnected, this, [this] {
@@ -59,29 +84,9 @@ void Application::setupClient()
     }
     mWindow->adjustSize();
   });
-}
 
-void Application::runDialog()
-{
-  auto dialog = new QProcess(this);
-  dialog->setProgram(applicationFilePath());
-  dialog->setArguments({u"--server-socket"_s, mServer->name()});
-  dialog->startDetached();
-}
-
-auto Application::exec() -> int
-{
-  if (mServer) {
-    if (auto name = Server::generateName(); not mServer->listen(name)) {
-      qCritical() << "could not start server at:" << name;
-      exit(1);
-    }
-    runDialog();
-  } else {
-    mClient->connectToServer(mOpts.serverSocket);
-  }
-
-  return QCoreApplication::exec();
+  mClient->connectToServer(mOpts.serverSocket);
+  return true;
 }
 
 void Application::onClientConnected()
@@ -89,14 +94,6 @@ void Application::onClientConnected()
   auto files = mOpts.files;
   if (files.empty()) {
     return;
-  }
-
-  files.removeIf([](const auto& name) { return not QFileInfo::exists(name); });
-
-  if (mOpts.dirsFirst) {
-    std::stable_partition(files.begin(), files.end(), [](const auto& name) {
-      return QFileInfo(name).isDir();
-    });
   }
 
   mServer->writePaths(files);

@@ -31,10 +31,9 @@ signals:
   void disconnected();
   void receivedURLs(QList<QUrl> urls);
 
-private slots:
+private:
   void onNewConnection();
 
-private:
   QLocalServer* mServer = nullptr;
   QLocalSocket* mClient = nullptr;
   FileParser* mParser = nullptr;
