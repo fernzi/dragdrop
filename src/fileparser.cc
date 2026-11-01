@@ -30,12 +30,14 @@ auto decodeString(QCborStreamReader& reader) -> QString
 
 void handleStream(QCborStreamReader& mReader, QStringList& output)
 {
+  using enum QCborStreamReader::Type;
+
   switch (mReader.type()) {
-    case QCborStreamReader::ByteArray:
-    case QCborStreamReader::String:
+    case ByteArray:
+    case String:
       output.append(decodeString(mReader));
       break;
-    case QCborStreamReader::Array:
+    case Array:
       mReader.enterContainer();
       while (not mReader.lastError() and mReader.hasNext()) {
         handleStream(mReader, output);
